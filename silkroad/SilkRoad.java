@@ -40,6 +40,7 @@ public class SilkRoad {
         }
     }
     
+    
     /**
     * Extensión para crear una ruta de seda con la entrada del problema de la maratón
     * Requisito 10: Debe permitir crear una ruta de seda con la entrada del problema de la maratón
@@ -81,6 +82,60 @@ public class SilkRoad {
         System.out.println("Ruta de seda creada con " + n + " tiendas y " + 
                            (input.length - robotStartIndex) + " robots");
     }
+    
+    /**
+ * Constructor que crea una ruta de seda con configuración multi-día
+ * Requisito 10: Permite crear una ruta de seda con la entrada del problema de la maratón
+ * 
+ * @param days Matriz donde cada fila representa la configuración de un día
+ *             Formato por fila: [n, s1, t1, s2, t2, ..., sn, tn, r1, r2, ...]
+ */
+public SilkRoad(int days[][]) {
+    if (days == null || days.length == 0) {
+        System.out.println("No es posible crear una ruta de seda sin configuración de días");
+        this.lenRoad = 0;
+        this.stores = new HashMap<>();
+        this.robots = new ArrayList<>();
+        this.posicion = new int[0][0];
+        this.StoresEmptiedByLocation = new ArrayList<>();
+        return;
+    }
+    
+    // Calcular longitud necesaria de la ruta
+    int maxPosition = 0;
+    for (int[] day : days) {
+        if (day.length > 0) {
+            int n = day[0];
+            
+            // Revisar posiciones de tiendas
+            for (int i = 0; i < n && (1 + 2*i) < day.length; i++) {
+                if (day[1 + 2*i] > maxPosition) {
+                    maxPosition = day[1 + 2*i];
+                }
+            }
+            
+            // Revisar posiciones de robots
+            for (int i = 1 + 2*n; i < day.length; i++) {
+                if (day[i] > maxPosition) {
+                    maxPosition = day[i];
+                }
+            }
+        }
+    }
+    
+    // Inicializar la ruta con longitud calculada
+    this.lenRoad = maxPosition + 1;
+    this.stores = new HashMap<>();
+    this.robots = new ArrayList<>();
+    this.posicion = Posicion.generateSpiral(this.lenRoad);
+    this.StoresEmptiedByLocation = new ArrayList<>();
+    
+    // Usar el método create() existente para configurar el primer día
+    create(days[0]);
+    
+    System.out.println("Ruta de seda creada con " + days.length + 
+                      " días configurados, longitud: " + this.lenRoad);
+}
 
     /**
      * Coloca una tienda en la ruta en una ubicación específica.
@@ -188,48 +243,85 @@ public class SilkRoad {
         store.setTenge(newTenges);
         return newRobotTenges;
     }
-    
     /**
-    * Método moveRobot mejorado con Requisito 11: decisión inteligente para maximizar ganancia
-    * @param location Posición actual del robot
-    * @param meters Distancia máxima (el robot decide la distancia óptima dentro de este rango)
+     * Mueve un robot específico desde su ubicación actual una distancia fija
+     * @param location Posición actual del robot a mover
+     * @param meters Distancia exacta a mover (positivo = adelante, negativo = atrás)
+     */
+     public void moveRobot(int location, int meters) {
+         if (meters == 0) return;
+         Robot robot = getFirstRobotAtLocation(location);
+         if (robot == null) {
+             System.out.println("No hay robot en la posición " + location);
+             return;}
+
+         int newLocation = location + meters;
+         if (newLocation < 0 || newLocation >= lenRoad) {
+             System.out.println("Movimiento inválido: posición " + newLocation + " fuera de rango");
+             return;
+         }
+         robot.removeRobot();
+         robot.setIndexLocation(newLocation);
+         robot.setLocation(posicion[newLocation]);
+         robot.makeVisible();
+         Store storeAtNewLocation = getFirstStoreAtLocation(newLocation);
+         if (storeAtNewLocation != null && storeAtNewLocation.getTenge() > 0) {
+             int totalTenges = takeTenges(robot, storeAtNewLocation);
+             robot.setTenge(totalTenges);
+             System.out.println("Robot recolectó " + storeAtNewLocation.getTenge() + 
+                          " tenges en posición " + newLocation);
+         }
+         updateStoresVisualState();
+     }
+    /**
+    * Mueve todos los robots de forma inteligente para maximizar ganancia total
+    * Requisito 11: Los robots deciden sus movimientos buscando maximizar la ganancia
     */
-        public void moveRobot(int location, int meters) {
-            if (meters == 0) return;
-            Robot robot = getFirstRobotAtLocation(location);
-            if (robot == null) return;
-            // REQUISITO 11: Robot decide el mejor movimiento
-            int bestMove = 0;
-            int maxGain = 0;
-            // Evaluar todas las opciones posibles
-            for (int distance = -Math.abs(meters); distance <= Math.abs(meters); distance++) {
-                if (distance == 0) continue;
-            
-                int targetLocation = location + distance;
-                if (targetLocation >= 0 && targetLocation < lenRoad) {
-                    Store store = getFirstStoreAtLocation(targetLocation);
-                    int gain = (store != null && store.getTenge() > 0) ? store.getTenge() : 0;
-                    
-                    if (gain > maxGain) {
-                        maxGain = gain;
-                        bestMove = distance;
-                    }
+   public void moveRobots() {
+       if (robots.isEmpty()) {
+        System.out.println("No hay robots para mover");
+        return;
+    }
+    System.out.println("=== Moviendo todos los robots de forma inteligente ===");
+    ArrayList<Robot> robotsCopy = new ArrayList<>(robots);
+    int robotsMoved = 0;
+    for (Robot robot : robotsCopy) {
+        int currentLocation = robot.getIndex();
+        int bestMove = 0;
+        int maxGain = 0;
+        for (int distance = -1; distance <= 1; distance++) {
+            if (distance == 0) continue;
+            int targetLocation = currentLocation + distance;
+            if (targetLocation >= 0 && targetLocation < lenRoad) {
+                Store store = getFirstStoreAtLocation(targetLocation);
+                int gain = (store != null && store.getTenge() > 0) ? store.getTenge() : 0;
+                
+                if (gain > maxGain) {
+                    maxGain = gain;
+                    bestMove = distance;
                 }
-            }   
-        // Si no hay ganancia, no se mueve
-        if (bestMove == 0) return;
-        // Ejecutar el mejor movimiento (código original)
-        robot.removeRobot();
-        int newLocation = location + bestMove;
-        Robot robotNewLocation = new Robot(robot.getId(), posicion[newLocation], newLocation);
-        robots.remove(robot.getId());
-        robots.put(robot.getId(), robotNewLocation);
-        if (stores.containsValue(getFirstStoreAtLocation(newLocation))) {
-            takeTenges(robotNewLocation, getFirstStoreAtLocation(newLocation));
-            
+            }
         }
-        
-        showRobotProfits(robot);
+
+        if (bestMove != 0) {
+            int newLocation = currentLocation + bestMove;
+            robot.removeRobot();
+
+            robot.setIndexLocation(newLocation);
+            robot.setLocation(posicion[newLocation]);
+            robot.makeVisible();
+            Store storeAtNewLocation = getFirstStoreAtLocation(newLocation);
+            if (storeAtNewLocation != null && storeAtNewLocation.getTenge() > 0) {
+                int totalTenges = takeTenges(robot, storeAtNewLocation);
+                robot.setTenge(totalTenges);
+                System.out.println("Robot movido de posición " + currentLocation + 
+                                  " a " + newLocation + " (ganó " + maxGain + " tenges)");
+            }
+            
+            robotsMoved++;
+        }
+    }
+    updateStoresVisualState();
     }
     
     /**
@@ -449,7 +541,7 @@ public class SilkRoad {
     * Actualiza la apariencia visual de todas las tiendas según su estado
     * Las tiendas desocupadas (tenge = 0) lucen diferentes a las ocupadas
     */
-    public void updateStoresVisualState() {
+    private void updateStoresVisualState() {
         for (var entry : stores.entrySet()) {
             Store store = entry.getValue();
             if (store != null && store.base != null) {
