@@ -82,6 +82,8 @@ public class SilkRoad {
                            (input.length - robotStartIndex) + " robots");
     }
 
+    //Requisito 10
+    
     /**
      * Coloca una tienda en la ruta en una ubicación específica.
      * 
@@ -194,18 +196,51 @@ public class SilkRoad {
     * @param location Posición actual del robot
     * @param meters Distancia máxima (el robot decide la distancia óptima dentro de este rango)
     */
-        public void moveRobot(int location, int meters) {
-            if (meters == 0) return;
-            Robot robot = getFirstRobotAtLocation(location);
-            if (robot == null) return;
-            // REQUISITO 11: Robot decide el mejor movimiento
+    public void moveRobot(int location, int meters) {
+         if (meters == 0) return;
+         Robot robot = getFirstRobotAtLocation(location);
+         if (robot == null) {
+             System.out.println("No hay robot en la posición " + location);
+             return;}
+
+         int newLocation = location + meters;
+         if (newLocation < 0 || newLocation >= lenRoad) {
+             System.out.println("Movimiento inválido: posición " + newLocation + " fuera de rango");
+             return;
+         }
+         robot.removeRobot();
+         robot.setIndexLocation(newLocation);
+         robot.setLocation(posicion[newLocation]);
+         robot.makeVisible();
+         Store storeAtNewLocation = getFirstStoreAtLocation(newLocation);
+         if (storeAtNewLocation != null && storeAtNewLocation.getTenge() > 0) {
+             int totalTenges = takeTenges(robot, storeAtNewLocation);
+             robot.setTenge(totalTenges);
+             System.out.println("Robot recolectó " + storeAtNewLocation.getTenge() + 
+                          " tenges en posición " + newLocation);
+         }
+         updateStoresVisualState();
+     }
+
+    /**
+    * Mueve todos los robots de forma inteligente para maximizar ganancia total
+    * Requisito 11: Los robots deciden sus movimientos buscando maximizar la ganancia
+    */
+    public void moveRobots() {
+        if (robots.isEmpty()) {
+            System.out.println("No hay robots para mover");
+            return;
+        }
+        System.out.println("=== Moviendo todos los robots de forma inteligente ===");
+        ArrayList<Robot> robotsCopy = new ArrayList<>(robots);
+        int robotsMoved = 0;
+        for (Robot robot : robotsCopy) {
+            int currentLocation = robot.getIndex();
             int bestMove = 0;
             int maxGain = 0;
-            // Evaluar todas las opciones posibles
-            for (int distance = -Math.abs(meters); distance <= Math.abs(meters); distance++) {
+            for (int distance = -1; distance <= 1; distance++) {
                 if (distance == 0) continue;
-            
-                int targetLocation = location + distance;
+                int targetLocation = currentLocation + distance;
                 if (targetLocation >= 0 && targetLocation < lenRoad) {
                     Store store = getFirstStoreAtLocation(targetLocation);
                     int gain = (store != null && store.getTenge() > 0) ? store.getTenge() : 0;
@@ -215,21 +250,27 @@ public class SilkRoad {
                         bestMove = distance;
                     }
                 }
-            }   
-        // Si no hay ganancia, no se mueve
-        if (bestMove == 0) return;
-        // Ejecutar el mejor movimiento (código original)
-        robot.removeRobot();
-        int newLocation = location + bestMove;
-        Robot robotNewLocation = new Robot(robot.getId(), posicion[newLocation], newLocation);
-        robots.remove(robot.getId());
-        robots.put(robot.getId(), robotNewLocation);
-        if (stores.containsValue(getFirstStoreAtLocation(newLocation))) {
-            takeTenges(robotNewLocation, getFirstStoreAtLocation(newLocation));
-            
         }
-        
-        showRobotProfits(robot);
+
+            if (bestMove != 0) {
+                int newLocation = currentLocation + bestMove;
+                robot.removeRobot();
+    
+                robot.setIndexLocation(newLocation);
+                robot.setLocation(posicion[newLocation]);
+                robot.makeVisible();
+                Store storeAtNewLocation = getFirstStoreAtLocation(newLocation);
+                if (storeAtNewLocation != null && storeAtNewLocation.getTenge() > 0) {
+                    int totalTenges = takeTenges(robot, storeAtNewLocation);
+                    robot.setTenge(totalTenges);
+                    System.out.println("Robot movido de posición " + currentLocation + 
+                                      " a " + newLocation + " (ganó " + maxGain + " tenges)");
+                    }
+            
+                robotsMoved++;
+            }
+        }
+        updateStoresVisualState();
     }
     
     /**

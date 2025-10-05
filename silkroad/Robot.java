@@ -36,6 +36,10 @@ public class Robot {
         return this.index;
     }
 
+    public void setTenge(int tenge){
+        this.tenge = tenge;
+    }
+    
     public void removeRobot(){
         this.robot.makeInvisible();
     }
