@@ -1,6 +1,7 @@
 import java.util.HashMap;
 import java.util.ArrayList;
 import java.util.*;
+import java.util.Map;
 
 /**
  * Clase que representa el simulador de la Ruta de la Seda.
@@ -308,14 +309,37 @@ public class SilkRoad {
     /**
      * Retorna la cantidad de veces que una tienda ha sido desocupado por su ubicación.
      */
-    public void getTimesStoresEmptied(){
-        for (Store store : stores.values()){
-            int totalEmptiedTimes  = store.getTimesEmpty();
-            int location = store.getLoc();
-            System.out.println("La tienda de la ubicación: " + location + " ha sido desocupada " + totalEmptiedTimes + " veces.");
+    public String[][] emptiedStores() {
+        String[][] matriz = new String[stores.size()][2];
+        int fila = 0;
+
+        for (Map.Entry<Integer, Store> entry : stores.entrySet()) {
+            for (int col = 0; col < 2; col++) {
+                if (col == 0) {
+                    matriz[fila][col] = String.valueOf(entry.getKey()); 
+                    matriz[fila][col] = String.valueOf(entry.getValue().getTimesEmpty());
+                }
+            }
+            fila++;
         }
+        printEmptiedStoresMatrix();
+        return matriz;
     }
      
+    /**
+     * Imprime matriz generada para visualizar la cantidad de veces que una tienda ha sido desocupada.
+     */
+    private void printEmptiedStoresMatrix() {
+        String[][] matriz = emptiedStores();
+
+        for (int i = 0; i < matriz.length; i++) {
+            for (int j = 0; j < matriz[i].length; j++) {
+                System.out.print(matriz[i][j] + "\t");
+            }
+            System.out.println();
+        }
+    }
+    
     /**
      * Permite identificar el robot con mayor ganancias
      */
