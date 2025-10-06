@@ -1,5 +1,6 @@
 import java.util.HashMap;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.*;
 import java.util.Map;
 
@@ -209,6 +210,7 @@ public class SilkRoad {
              System.out.println("Movimiento inválido: posición " + newLocation + " fuera de rango");
              return;
          }
+         
          robot.removeRobot();
          robot.setIndexLocation(newLocation);
          robot.setLocation(posicion[newLocation]);
@@ -217,8 +219,9 @@ public class SilkRoad {
          if (storeAtNewLocation != null && storeAtNewLocation.getTenge() > 0) {
              int totalTenges = takeTenges(robot, storeAtNewLocation);
              robot.setTenge(totalTenges);
-             System.out.println("Robot recolectó " + storeAtNewLocation.getTenge() + 
-                          " tenges en posición " + newLocation);
+             System.out.println("Robot ha recolectado" + storeAtNewLocation.getTenge() + 
+                          " tenges hasta la posición " + newLocation);
+             robot.addProfitsInMovements(totalTenges);
          }
          updateStoresVisualState();
      }
@@ -251,7 +254,7 @@ public class SilkRoad {
                         bestMove = distance;
                     }
                 }
-        }
+            }
 
             if (bestMove != 0) {
                 int newLocation = currentLocation + bestMove;
@@ -342,40 +345,56 @@ public class SilkRoad {
     
     /**
      * Permite identificar el robot con mayor ganancias
+     * @return void
      */
-    //Preguntarle a la profe.
-    private void getRobotHighestProfits(){
+    private void getRobotHighestProfits() {
+        if (robots.isEmpty()) return; 
+    
         ArrayList<Integer> profits = new ArrayList<>();
         ArrayList<Robot> robs = new ArrayList<>();
-        for (Robot rb:robots.values()){
-            int profit = rb.getTenge();
-            profits.add(profit);
+    
+        for (Robot rb : robots) {
+            profits.add(rb.getTenge());
             robs.add(rb);
         }
+    
         int maxProfit = Collections.max(profits);
-        
+    
         List<Integer> indices = new ArrayList<>();
         for (int i = 0; i < profits.size(); i++) {
             if (profits.get(i) == maxProfit) {
                 indices.add(i);
             }
         }
-        
-        if (indices.size() > 1){
-            System.out.println("Hay un empate entre los robots");
-            for (int i : indices){
-                Robot rb = robs.get(i);
-                System.out.println("Robot en la ubicación: " + rb.getLoc());        
-            }
-        } else if (indices.size() <= 0){
-            System.out.println("No hay robots registrados");
-        } else {
-            robs.get(profits.get(0)).makeInvisible();
-            robs.get(profits.get(0)).makeVisible();
-            robs.get(profits.get(0)).makeInvisible();
-            robs.get(profits.get(0)).makeVisible();
-        }  
+
+        if (indices.size() != 1) return;
+    
+        Robot rb = robs.get(indices.get(0));
+        for (int j = 0; j < 2; j++) {
+            rb.makeInvisible();
+            rb.makeVisible();
+        }
     }
+
+    /**
+     * Ejecutar constantemente el programa.
+     */
+    //Código generado por IA para poder visualizar constantemente el robot con mayor beneficio dado que no sabíamos cómo ejecutarlo.
+    private void startRobotProfitMonitor() {
+        Thread monitorThread = new Thread(() -> {
+            while (true) {
+                try {
+                    getRobotHighestProfits();
+                    Thread.sleep(3000); // cada 3 segundos
+                } catch (InterruptedException e) {
+                    break; // sale del hilo si se interrumpe
+                }
+            }
+        });
+        monitorThread.setDaemon(true); // no bloquea la finalización del programa
+        monitorThread.start();
+    }
+
     
     /**
      * Reinicia la simulación de la Ruta de la Seda,
@@ -393,7 +412,7 @@ public class SilkRoad {
      * @return Cantidad total de tenges obtenida.
      */
      public int profit(){
-        int totalProfit;
+        int totalProfit = 0;
         for(Robot robot : robots){
             totalProfit += robot.getTenge();
         }
@@ -435,7 +454,55 @@ public class SilkRoad {
      }
     
     /**
+     * Permite ver las ganancias de cada robot por movimiento.
+     * @return matriz con ubicación de cada robot y las ganancias totales en cada movimiento.
+     */
+     
+    public int[][] profitPerMove() {
+        int maxMovs = 0;
+        for (Robot robot : robots) {
+            int movs = robot.getMovements().size();
+            if (movs > maxMovs) {
+                maxMovs = movs;
+            }
+        }
+
+        int[][] matriz = new int[robots.size()][1 + maxMovs];
+    
+        int fila = 0;
+        for (Robot robot : robots) {
+            matriz[fila][0] = robot.getIndex();
+    
+            ArrayList<Integer> movs = robot.getMovements();
+            for (int i = 0; i < movs.size(); i++) {
+                matriz[fila][i + 1] = movs.get(i);  
+            }
+    
+            fila++;
+        }
+        
+        printProfitPerMove(matriz);
+        
+        return matriz;
+    }
+    
+    /**
+     * Imprimir la matriz generada para ganancias
+     * @return void
+     */
+    
+    private void printProfitPerMove(int[][] matriz){
+        for (int i = 0; i < matriz.length; i++) {
+            for (int j = 0; j < matriz[i].length; j++) {
+                System.out.print(matriz[i][j] + "\t");
+            }
+            System.out.println();
+        }
+    }
+    
+    /**
     * Hace visible la simulación gráfica de la Ruta de la Seda.
+    * @return void
     */
     public void makeVisible(){
         for (var entry : stores.entrySet()){
@@ -454,6 +521,7 @@ public class SilkRoad {
 
     /**
     * Hace invisible la simulación gráfica de la Ruta de la Seda.
+    * @return void
     */
     public void makeInvisible(){
         for (var entry : stores.entrySet()){
@@ -471,6 +539,7 @@ public class SilkRoad {
     /**
     * Termina la simulación de la Ruta de la Seda,
     * liberando todos los recursos (tiendas y robots).
+    * return @void
     */
     public void finish(){
         for (var entry : stores.entrySet()){
@@ -509,10 +578,12 @@ public class SilkRoad {
             return false;
         }
     }
+    
     //Requisito de Usabilidad-Las tiendas desocupadas deben lucir diferentes
     /**
     * Actualiza la apariencia visual de todas las tiendas según su estado
     * Las tiendas desocupadas (tenge = 0) lucen diferentes a las ocupadas
+    * @return void
     */
     public void updateStoresVisualState() {
         for (var entry : stores.entrySet()) {

@@ -1,4 +1,5 @@
 import java.util.*;
+import java.util.ArrayList;
 
 public class Robot {
     private Circle robot;
@@ -6,6 +7,7 @@ public class Robot {
     private int[] location;
     private int tenge;
     private static int[] initialLocation;
+    private static ArrayList<Integer> movements;
 
     public Robot(int[] location, int index){
         this.robot = new Circle(location[0], location[1]);
@@ -20,6 +22,14 @@ public class Robot {
         return this.location;
     }
 
+    public void addProfitsInMovements(int profit){
+        this.movements.add(profit);
+    }
+    
+    public ArrayList<Integer> getMovements(){
+        return this.movements;
+    }
+    
     public int getTenge() {
         return this.tenge;
     }
