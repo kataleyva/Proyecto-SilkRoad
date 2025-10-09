@@ -17,30 +17,46 @@ dependency3.type=UsesDependency
 dependency4.from=Rectangle
 dependency4.to=Canvas
 dependency4.type=UsesDependency
-dependency5.from=Triangle
-dependency5.to=Canvas
+dependency5.from=Store
+dependency5.to=Rectangle
 dependency5.type=UsesDependency
-dependency6.from=SilkRoadC2Test
-dependency6.to=SilkRoad
+dependency6.from=Triangle
+dependency6.to=Canvas
 dependency6.type=UsesDependency
+<<<<<<< HEAD
 dependency7.from=SilkRoad
 dependency7.to=Store
 dependency7.type=UsesDependency
 dependency8.from=SilkRoad
 dependency8.to=Robot
+=======
+dependency7.from=Robot
+dependency7.to=Circle
+dependency7.type=UsesDependency
+dependency8.from=SilkRoadC2Test
+dependency8.to=SilkRoad
+>>>>>>> Mich
 dependency8.type=UsesDependency
 dependency9.from=SilkRoad
 dependency9.to=Posicion
 dependency9.type=UsesDependency
+<<<<<<< HEAD
 editor.fx.0.height=736
 editor.fx.0.width=1382
 editor.fx.0.x=-8
 editor.fx.0.y=-8
 objectbench.height=104
+=======
+editor.fx.0.height=727
+editor.fx.0.width=697
+editor.fx.0.x=676
+editor.fx.0.y=0
+objectbench.height=66
+>>>>>>> Mich
 objectbench.width=1342
 package.divider.horizontal=0.7049924357034796
-package.divider.vertical=0.8254716981132075
-package.editor.height=505
+package.divider.vertical=0.8852201257861635
+package.editor.height=543
 package.editor.width=1226
 package.editor.x=0
 package.editor.y=0
