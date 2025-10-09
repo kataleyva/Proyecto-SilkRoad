@@ -57,10 +57,6 @@ public class Robot {
     public void setIndexLocation(int index) {
         this.index = index;
     }
-    
-    public void setTenge(int Tenge){
-        this.tenge=tenge;
-    }
 
     public void setLocation(int[] location) {
         removeRobot();
