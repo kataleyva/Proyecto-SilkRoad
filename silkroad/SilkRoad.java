@@ -375,7 +375,7 @@ public class SilkRoad {
      * Permite identificar el robot con mayor ganancias
      * @return void
      */
-    private void getRobotHighestProfits() {
+    public void getRobotHighestProfits() {
         if (robots.isEmpty()) return; 
     
         ArrayList<Integer> profits = new ArrayList<>();
