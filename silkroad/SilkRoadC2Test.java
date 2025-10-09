@@ -103,7 +103,7 @@ public class SilkRoadC2Test {
         silkRoad.placeStore(0, 30);
         silkRoad.placeStore(2, 40);
         
-        silkRoad.getTimesStoresEmptied();
+        silkRoad.emptiedStores();
         
         String output = outContent.toString();
         assertTrue("Debe mostrar información de vaciado para ubicación 0", 
@@ -117,7 +117,7 @@ public class SilkRoadC2Test {
      */
     @Test
     public void GetTimesStoresEmptiedLRShouldHandleNoStores() {
-        silkRoad.getTimesStoresEmptied();
+        silkRoad.emptiedStores();
         
         String output = outContent.toString();
         
@@ -177,6 +177,250 @@ public class SilkRoadC2Test {
         assertTrue("Debe indicar que no hay robots registrados", 
                    output.contains("No hay robots registrados"));
     }
+    //PlaceStore-RemoveStore
+     @Test
+    public void testPlaceStore() {
+        silkRoad.placeStore(2, 100);
+        int[][] stores = silkRoad.stores();
+        
+        assertEquals("Debe haber 1 tienda", 1, stores.length);
+        assertEquals("Tienda en posición 2", 2, stores[0][0]);
+        assertEquals("Con 100 tenges", 100, stores[0][1]);
+    }
+    
+    @Test
+    public void testPlaceStoreDuplicate() {
+        silkRoad.placeStore(2, 100);
+        silkRoad.placeStore(2, 200); // Intento duplicado
+        
+        int[][] stores = silkRoad.stores();
+        assertEquals("No debe permitir tiendas duplicadas", 1, stores.length);
+    }
+    
+    @Test
+    public void testRemoveStore() {
+        silkRoad.placeStore(2, 100);
+        silkRoad.removeStore(2);
+        
+        int[][] stores = silkRoad.stores();
+        assertEquals("Tienda debe ser eliminada", 0, stores.length);
+    }
+    
+    @Test
+    public void testRemoveNonExistentStore() {
+        silkRoad.removeStore(5);
+        assertTrue("Debe manejar eliminación de tienda inexistente", true);
+    }
+    //PlaceRobot-RemoveRobot
+     
+    @Test
+    public void testPlaceRobot() {
+        silkRoad.placeRobot(3);
+        int[][] robots = silkRoad.robots();
+        
+        assertEquals("Debe haber 1 robot", 1, robots.length);
+        assertEquals("Robot en posición 3", 3, robots[0][0]);
+    }
+    
+    @Test
+    public void testPlaceRobotDuplicate() {
+        silkRoad.placeRobot(3);
+        silkRoad.placeRobot(3);
+        
+        int[][] robots = silkRoad.robots();
+        assertEquals("No debe permitir robots duplicados", 1, robots.length);
+    }
+    
+    @Test
+    public void testRemoveRobot() {
+        silkRoad.placeRobot(3);
+        silkRoad.removeRobot(3);
+        
+        int[][] robots = silkRoad.robots();
+        assertEquals("Robot debe ser eliminado", 0, robots.length);
+    }
+    
+    @Test
+    public void testRemoveNonExistentRobot() {
+        silkRoad.removeRobot(5);
+        assertTrue("Debe manejar eliminación de robot inexistente", true);
+    }
+    //Reboot
+    @Test
+    public void testReboot() {
+        silkRoad.placeStore(1, 100);
+        silkRoad.placeStore(3, 50);
+        silkRoad.placeRobot(0);
+        silkRoad.placeRobot(2);
+        silkRoad.moveRobot(0, 1);
+        silkRoad.moveRobot(2, 1);
+        
+        int profitBefore = silkRoad.profit();
+        silkRoad.reboot();
+        int profitAfter = silkRoad.profit();
+        
+        assertEquals("Ganancias deben resetearse a 0", 0, profitAfter);
+    }
+    
+    //Stores
+     @Test
+    public void testStores() {
+        silkRoad.placeStore(1, 100);
+        silkRoad.placeStore(3, 50);
+        
+        int[][] stores = silkRoad.stores();
+        
+        assertEquals("Debe retornar 2 tiendas", 2, stores.length);
+    }
+    
+    @Test
+    public void testStoresEmpty() {
+        int[][] stores = silkRoad.stores();
+        assertEquals("Sin tiendas, matriz vacía", 0, stores.length);
+    }
+    //Robots
+    
+      @Test
+    public void testRobots() {
+        silkRoad.placeRobot(1);
+        silkRoad.placeRobot(3);
+        
+        int[][] robots = silkRoad.robots();
+        
+        assertEquals("Debe retornar 2 robots", 2, robots.length);
+        // Verificar ordenamiento
+        assertTrue("Debe estar ordenado por ubicación", robots[0][0] <= robots[1][0]);
+    }
+    
+    @Test
+    public void testRobotsEmpty() {
+        int[][] robots = silkRoad.robots();
+        assertEquals("Sin robots, matriz vacía", 0, robots.length);
+    }
+    
+    //MakeVisible-MakeInvisible
+    @Test
+    public void testMakeVisible() {
+        silkRoad.placeStore(1, 100);
+        silkRoad.placeRobot(0);
+        
+        silkRoad.makeVisible();
+        // No debe lanzar excepción
+        assertTrue("Debe activar modo visible sin errores", true);
+    }
+    
+    @Test
+    public void testMakeInvisible() {
+        silkRoad.makeVisible();
+        silkRoad.makeInvisible();
+        // No debe lanzar excepción
+        assertTrue("Debe desactivar modo visible sin errores", true);
+    }
+ 
+    //MoveRobot
+     @Test
+    public void testMoveRobotValid() {
+        silkRoad.placeStore(2, 100);
+        silkRoad.placeRobot(0);
+        
+        silkRoad.moveRobot(0, 2);
+        
+        int[][] robots = silkRoad.robots();
+        assertEquals("Robot debe moverse a posición 2", 2, robots[0][0]);
+        assertTrue("Robot debe tener ganancias", robots[0][1] > 0);
+    }
+    
+    @Test
+    public void testMoveRobotCollectTenges() {
+        silkRoad.placeStore(2, 100);
+        silkRoad.placeRobot(0);
+        
+        int profitBefore = silkRoad.profit();
+        silkRoad.moveRobot(0, 2);
+        int profitAfter = silkRoad.profit();
+        
+        assertEquals("Ganancia debe ser 100", 100, profitAfter);
+    }
+    
+    @Test
+    public void testMoveRobotToEmptyStore() {
+        silkRoad.placeStore(2, 100);
+        silkRoad.placeRobot(0);
+
+        silkRoad.moveRobot(0, 2);
+        silkRoad.moveRobot(2, 1);
+        
+        int profit = silkRoad.profit();
+        assertEquals("Solo debe recolectar 100 tenges", 100, profit);
+    }
+    
+    @Test
+    public void testMoveRobotOutOfBounds() {
+        silkRoad.placeRobot(0);
+        
+        silkRoad.moveRobot(0, 15); // Fuera de límites
+        
+        int[][] robots = silkRoad.robots();
+        assertEquals("Robot debe permanecer en posición original", 0, robots[0][0]);
+    }
+    
+    @Test
+    public void testMoveNonExistentRobot() {
+        silkRoad.moveRobot(5, 2); // Robot que no existe
+        // No debe lanzar excepción
+        assertTrue("Debe manejar movimiento de robot inexistente", true);
+    }
+    
+    @Test
+    public void testMoveRobotZeroMeters() {
+        silkRoad.placeRobot(3);
+        silkRoad.moveRobot(3, 0); // Movimiento cero
+        
+        int[][] robots = silkRoad.robots();
+        assertEquals("Robot debe permanecer en misma posición", 3, robots[0][0]);
+    }
+    
+    //MoveRobots
+     @Test
+    public void testMoveRobotsWithStores() {
+        silkRoad.placeStore(1, 50);
+        silkRoad.placeStore(4, 100);
+        silkRoad.placeRobot(0);
+        silkRoad.placeRobot(2);
+        
+        silkRoad.moveRobots();
+        
+        int profit = silkRoad.profit();
+        assertTrue("Debe haber ganancias después de movimiento automático", profit > 0);
+    }
+    
+    @Test
+    public void testMoveRobotsNoRobots() {
+        silkRoad.placeStore(1, 50);
+        silkRoad.moveRobots(); // Sin robots
+        
+        int profit = silkRoad.profit();
+        assertEquals("Sin robots, no debe haber ganancias", 0, profit);
+    }
+    
+    @Test
+    public void testMoveRobotsNoStores() {
+        silkRoad.placeRobot(0);
+        silkRoad.placeRobot(3);
+        silkRoad.moveRobots(); // Sin tiendas
+        
+        int profit = silkRoad.profit();
+        assertEquals("Sin tiendas, no debe haber ganancias", 0, profit);
+    }
+    
+    
+    
+    
+    
+    
+    
+    //CAMBIAR ESTAS PRUEBAS DE ACEPTACION PARA LA CLASE SILKROAD
+    
 
     // Combinación de métodos
     /**
@@ -198,7 +442,7 @@ public class SilkRoadC2Test {
         
         silkRoad.resupplyStores();
         
-        silkRoad.getTimesStoresEmptied();
+        silkRoad.emptiedStores();
         
         String output = outContent.toString();
         
