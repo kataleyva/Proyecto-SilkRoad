@@ -1,6 +1,8 @@
 import java.util.HashMap;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.*;
+import java.util.Map;
 
 /**
  * Clase que representa el simulador de la Ruta de la Seda.
@@ -39,7 +41,6 @@ public class SilkRoad {
     
         }
     }
-    
     
     /**
     * Extensión para crear una ruta de seda con la entrada del problema de la maratón
@@ -82,61 +83,9 @@ public class SilkRoad {
         System.out.println("Ruta de seda creada con " + n + " tiendas y " + 
                            (input.length - robotStartIndex) + " robots");
     }
-    
-    /**
- * Constructor que crea una ruta de seda con configuración multi-día
- * Requisito 10: Permite crear una ruta de seda con la entrada del problema de la maratón
- * 
- * @param days Matriz donde cada fila representa la configuración de un día
- *             Formato por fila: [n, s1, t1, s2, t2, ..., sn, tn, r1, r2, ...]
- */
-public SilkRoad(int days[][]) {
-    if (days == null || days.length == 0) {
-        System.out.println("No es posible crear una ruta de seda sin configuración de días");
-        this.lenRoad = 0;
-        this.stores = new HashMap<>();
-        this.robots = new ArrayList<>();
-        this.posicion = new int[0][0];
-        this.StoresEmptiedByLocation = new ArrayList<>();
-        return;
-    }
-    
-    // Calcular longitud necesaria de la ruta
-    int maxPosition = 0;
-    for (int[] day : days) {
-        if (day.length > 0) {
-            int n = day[0];
-            
-            // Revisar posiciones de tiendas
-            for (int i = 0; i < n && (1 + 2*i) < day.length; i++) {
-                if (day[1 + 2*i] > maxPosition) {
-                    maxPosition = day[1 + 2*i];
-                }
-            }
-            
-            // Revisar posiciones de robots
-            for (int i = 1 + 2*n; i < day.length; i++) {
-                if (day[i] > maxPosition) {
-                    maxPosition = day[i];
-                }
-            }
-        }
-    }
-    
-    // Inicializar la ruta con longitud calculada
-    this.lenRoad = maxPosition + 1;
-    this.stores = new HashMap<>();
-    this.robots = new ArrayList<>();
-    this.posicion = Posicion.generateSpiral(this.lenRoad);
-    this.StoresEmptiedByLocation = new ArrayList<>();
-    
-    // Usar el método create() existente para configurar el primer día
-    create(days[0]);
-    
-    System.out.println("Ruta de seda creada con " + days.length + 
-                      " días configurados, longitud: " + this.lenRoad);
-}
 
+    //Requisito 10
+    
     /**
      * Coloca una tienda en la ruta en una ubicación específica.
      * 
@@ -243,12 +192,13 @@ public SilkRoad(int days[][]) {
         store.setTenge(newTenges);
         return newRobotTenges;
     }
+    
     /**
-     * Mueve un robot específico desde su ubicación actual una distancia fija
-     * @param location Posición actual del robot a mover
-     * @param meters Distancia exacta a mover (positivo = adelante, negativo = atrás)
-     */
-     public void moveRobot(int location, int meters) {
+    * Método moveRobot mejorado con Requisito 11: decisión inteligente para maximizar ganancia
+    * @param location Posición actual del robot
+    * @param meters Distancia máxima (el robot decide la distancia óptima dentro de este rango)
+    */
+    public void moveRobot(int location, int meters) {
          if (meters == 0) return;
          Robot robot = getFirstRobotAtLocation(location);
          if (robot == null) {
@@ -260,6 +210,7 @@ public SilkRoad(int days[][]) {
              System.out.println("Movimiento inválido: posición " + newLocation + " fuera de rango");
              return;
          }
+         
          robot.removeRobot();
          robot.setIndexLocation(newLocation);
          robot.setLocation(posicion[newLocation]);
@@ -268,60 +219,62 @@ public SilkRoad(int days[][]) {
          if (storeAtNewLocation != null && storeAtNewLocation.getTenge() > 0) {
              int totalTenges = takeTenges(robot, storeAtNewLocation);
              robot.setTenge(totalTenges);
-             System.out.println("Robot recolectó " + storeAtNewLocation.getTenge() + 
-                          " tenges en posición " + newLocation);
+             System.out.println("Robot ha recolectado" + storeAtNewLocation.getTenge() + 
+                          " tenges hasta la posición " + newLocation);
+             robot.addProfitsInMovements(totalTenges);
          }
          updateStoresVisualState();
      }
+
     /**
     * Mueve todos los robots de forma inteligente para maximizar ganancia total
     * Requisito 11: Los robots deciden sus movimientos buscando maximizar la ganancia
     */
-   public void moveRobots() {
-       if (robots.isEmpty()) {
-        System.out.println("No hay robots para mover");
-        return;
-    }
-    System.out.println("=== Moviendo todos los robots de forma inteligente ===");
-    ArrayList<Robot> robotsCopy = new ArrayList<>(robots);
-    int robotsMoved = 0;
-    for (Robot robot : robotsCopy) {
-        int currentLocation = robot.getIndex();
-        int bestMove = 0;
-        int maxGain = 0;
-        for (int distance = -1; distance <= 1; distance++) {
-            if (distance == 0) continue;
-            int targetLocation = currentLocation + distance;
-            if (targetLocation >= 0 && targetLocation < lenRoad) {
-                Store store = getFirstStoreAtLocation(targetLocation);
-                int gain = (store != null && store.getTenge() > 0) ? store.getTenge() : 0;
-                
-                if (gain > maxGain) {
-                    maxGain = gain;
-                    bestMove = distance;
+    public void moveRobots() {
+        if (robots.isEmpty()) {
+            System.out.println("No hay robots para mover");
+            return;
+        }
+        System.out.println("=== Moviendo todos los robots de forma inteligente ===");
+        ArrayList<Robot> robotsCopy = new ArrayList<>(robots);
+        int robotsMoved = 0;
+        for (Robot robot : robotsCopy) {
+            int currentLocation = robot.getIndex();
+            int bestMove = 0;
+            int maxGain = 0;
+            for (int distance = -1; distance <= 1; distance++) {
+                if (distance == 0) continue;
+                int targetLocation = currentLocation + distance;
+                if (targetLocation >= 0 && targetLocation < lenRoad) {
+                    Store store = getFirstStoreAtLocation(targetLocation);
+                    int gain = (store != null && store.getTenge() > 0) ? store.getTenge() : 0;
+                    
+                    if (gain > maxGain) {
+                        maxGain = gain;
+                        bestMove = distance;
+                    }
                 }
             }
-        }
 
-        if (bestMove != 0) {
-            int newLocation = currentLocation + bestMove;
-            robot.removeRobot();
-
-            robot.setIndexLocation(newLocation);
-            robot.setLocation(posicion[newLocation]);
-            robot.makeVisible();
-            Store storeAtNewLocation = getFirstStoreAtLocation(newLocation);
-            if (storeAtNewLocation != null && storeAtNewLocation.getTenge() > 0) {
-                int totalTenges = takeTenges(robot, storeAtNewLocation);
-                robot.setTenge(totalTenges);
-                System.out.println("Robot movido de posición " + currentLocation + 
-                                  " a " + newLocation + " (ganó " + maxGain + " tenges)");
-            }
+            if (bestMove != 0) {
+                int newLocation = currentLocation + bestMove;
+                robot.removeRobot();
+    
+                robot.setIndexLocation(newLocation);
+                robot.setLocation(posicion[newLocation]);
+                robot.makeVisible();
+                Store storeAtNewLocation = getFirstStoreAtLocation(newLocation);
+                if (storeAtNewLocation != null && storeAtNewLocation.getTenge() > 0) {
+                    int totalTenges = takeTenges(robot, storeAtNewLocation);
+                    robot.setTenge(totalTenges);
+                    System.out.println("Robot movido de posición " + currentLocation + 
+                                      " a " + newLocation + " (ganó " + maxGain + " tenges)");
+                    }
             
-            robotsMoved++;
+                robotsMoved++;
+            }
         }
-    }
-    updateStoresVisualState();
+        updateStoresVisualState();
     }
     
     /**
@@ -359,50 +312,89 @@ public SilkRoad(int days[][]) {
     /**
      * Retorna la cantidad de veces que una tienda ha sido desocupado por su ubicación.
      */
-    public void getTimesStoresEmptied(){
-        for (Store store : stores.values()){
-            int totalEmptiedTimes  = store.getTimesEmpty();
-            int location = store.getLoc();
-            System.out.println("La tienda de la ubicación: " + location + " ha sido desocupada " + totalEmptiedTimes + " veces.");
+    public String[][] emptiedStores() {
+        String[][] matriz = new String[stores.size()][2];
+        int fila = 0;
+
+        for (Map.Entry<Integer, Store> entry : stores.entrySet()) {
+            for (int col = 0; col < 2; col++) {
+                if (col == 0) {
+                    matriz[fila][col] = String.valueOf(entry.getKey()); 
+                    matriz[fila][col] = String.valueOf(entry.getValue().getTimesEmpty());
+                }
+            }
+            fila++;
         }
+        printEmptiedStoresMatrix();
+        return matriz;
     }
      
     /**
-     * Permite identificar el robot con mayor ganancias
+     * Imprime matriz generada para visualizar la cantidad de veces que una tienda ha sido desocupada.
      */
-    //Preguntarle a la profe.
-    private void getRobotHighestProfits(){
+    private void printEmptiedStoresMatrix() {
+        String[][] matriz = emptiedStores();
+
+        for (int i = 0; i < matriz.length; i++) {
+            for (int j = 0; j < matriz[i].length; j++) {
+                System.out.print(matriz[i][j] + "\t");
+            }
+            System.out.println();
+        }
+    }
+    
+    /**
+     * Permite identificar el robot con mayor ganancias
+     * @return void
+     */
+    private void getRobotHighestProfits() {
+        if (robots.isEmpty()) return; 
+    
         ArrayList<Integer> profits = new ArrayList<>();
         ArrayList<Robot> robs = new ArrayList<>();
-        for (Robot rb:robots.values()){
-            int profit = rb.getTenge();
-            profits.add(profit);
+    
+        for (Robot rb : robots) {
+            profits.add(rb.getTenge());
             robs.add(rb);
         }
+    
         int maxProfit = Collections.max(profits);
-        
+    
         List<Integer> indices = new ArrayList<>();
         for (int i = 0; i < profits.size(); i++) {
             if (profits.get(i) == maxProfit) {
                 indices.add(i);
             }
         }
-        
-        if (indices.size() > 1){
-            System.out.println("Hay un empate entre los robots");
-            for (int i : indices){
-                Robot rb = robs.get(i);
-                System.out.println("Robot en la ubicación: " + rb.getLoc());        
-            }
-        } else if (indices.size() <= 0){
-            System.out.println("No hay robots registrados");
-        } else {
-            robs.get(profits.get(0)).makeInvisible();
-            robs.get(profits.get(0)).makeVisible();
-            robs.get(profits.get(0)).makeInvisible();
-            robs.get(profits.get(0)).makeVisible();
-        }  
+
+        if (indices.size() != 1) return;
+    
+        Robot rb = robs.get(indices.get(0));
+        for (int j = 0; j < 2; j++) {
+            rb.makeInvisible();
+            rb.makeVisible();
+        }
     }
+
+    /**
+     * Ejecutar constantemente el programa.
+     */
+    //Código generado por IA para poder visualizar constantemente el robot con mayor beneficio dado que no sabíamos cómo ejecutarlo.
+    private void startRobotProfitMonitor() {
+        Thread monitorThread = new Thread(() -> {
+            while (true) {
+                try {
+                    getRobotHighestProfits();
+                    Thread.sleep(3000); // cada 3 segundos
+                } catch (InterruptedException e) {
+                    break; // sale del hilo si se interrumpe
+                }
+            }
+        });
+        monitorThread.setDaemon(true); // no bloquea la finalización del programa
+        monitorThread.start();
+    }
+
     
     /**
      * Reinicia la simulación de la Ruta de la Seda,
@@ -420,7 +412,7 @@ public SilkRoad(int days[][]) {
      * @return Cantidad total de tenges obtenida.
      */
      public int profit(){
-        int totalProfit;
+        int totalProfit = 0;
         for(Robot robot : robots){
             totalProfit += robot.getTenge();
         }
@@ -462,7 +454,55 @@ public SilkRoad(int days[][]) {
      }
     
     /**
+     * Permite ver las ganancias de cada robot por movimiento.
+     * @return matriz con ubicación de cada robot y las ganancias totales en cada movimiento.
+     */
+     
+    public int[][] profitPerMove() {
+        int maxMovs = 0;
+        for (Robot robot : robots) {
+            int movs = robot.getMovements().size();
+            if (movs > maxMovs) {
+                maxMovs = movs;
+            }
+        }
+
+        int[][] matriz = new int[robots.size()][1 + maxMovs];
+    
+        int fila = 0;
+        for (Robot robot : robots) {
+            matriz[fila][0] = robot.getIndex();
+    
+            ArrayList<Integer> movs = robot.getMovements();
+            for (int i = 0; i < movs.size(); i++) {
+                matriz[fila][i + 1] = movs.get(i);  
+            }
+    
+            fila++;
+        }
+        
+        printProfitPerMove(matriz);
+        
+        return matriz;
+    }
+    
+    /**
+     * Imprimir la matriz generada para ganancias
+     * @return void
+     */
+    
+    private void printProfitPerMove(int[][] matriz){
+        for (int i = 0; i < matriz.length; i++) {
+            for (int j = 0; j < matriz[i].length; j++) {
+                System.out.print(matriz[i][j] + "\t");
+            }
+            System.out.println();
+        }
+    }
+    
+    /**
     * Hace visible la simulación gráfica de la Ruta de la Seda.
+    * @return void
     */
     public void makeVisible(){
         for (var entry : stores.entrySet()){
@@ -481,6 +521,7 @@ public SilkRoad(int days[][]) {
 
     /**
     * Hace invisible la simulación gráfica de la Ruta de la Seda.
+    * @return void
     */
     public void makeInvisible(){
         for (var entry : stores.entrySet()){
@@ -498,6 +539,7 @@ public SilkRoad(int days[][]) {
     /**
     * Termina la simulación de la Ruta de la Seda,
     * liberando todos los recursos (tiendas y robots).
+    * return @void
     */
     public void finish(){
         for (var entry : stores.entrySet()){
@@ -536,12 +578,14 @@ public SilkRoad(int days[][]) {
             return false;
         }
     }
+    
     //Requisito de Usabilidad-Las tiendas desocupadas deben lucir diferentes
     /**
     * Actualiza la apariencia visual de todas las tiendas según su estado
     * Las tiendas desocupadas (tenge = 0) lucen diferentes a las ocupadas
+    * @return void
     */
-    private void updateStoresVisualState() {
+    public void updateStoresVisualState() {
         for (var entry : stores.entrySet()) {
             Store store = entry.getValue();
             if (store != null && store.base != null) {
