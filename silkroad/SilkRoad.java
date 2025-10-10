@@ -325,7 +325,10 @@ public class SilkRoad {
      */
     public void resupplyStores() {
         for (Store store : stores.values()) {
-            store.setInitialTenge();
+            int tengeStore = store.getTenge();
+            if (tengeStore <= 0){
+                store.setInitialTenge();
+            }
         }
     }
 
@@ -335,7 +338,9 @@ public class SilkRoad {
      */
     public void returnRobots(){
         for (Robot robot: robots) {
-            robot.resetRobotLocation();
+            if (robot.getLocation() != robot.getInitialLocation()){
+                robot.resetRobotLocation();
+            }
         }
     }
 
@@ -374,7 +379,7 @@ public class SilkRoad {
      * Permite identificar el robot con mayor ganancias
      * @return void
      */
-    public void getRobotHighestProfits() {
+    private void getRobotHighestProfits() {
         if (robots.isEmpty()) return; 
     
         ArrayList<Integer> profits = new ArrayList<>();
@@ -442,7 +447,7 @@ public class SilkRoad {
      * 
      * @return Cantidad total de tenges obtenida por todos los robots.
      */
-    public int profit(){
+    public int porfit(){
         int totalProfit = 0;
         for(Robot robot : robots){
             totalProfit += robot.getTenge();
@@ -527,6 +532,7 @@ public class SilkRoad {
         
         return matriz;
     }
+    
     /**
      * Hace visible la simulación gráfica de la Ruta de la Seda.
      * Muestra visualmente todas las tiendas y robots en sus posiciones actuales.
@@ -627,58 +633,58 @@ public class SilkRoad {
                                         JOptionPane.INFORMATION_MESSAGE);
         }
     }
-//Pruebas de aceptacion
-/**
- * Prueba de aceptación visual para la clase SilkRoad.
- * 
- * Crea una simulación con tiendas y robots, los mueve y reinicia,
- */
-public void testAceptacion() {
-    System.out.println(" INICIO PRUEBA DE ACEPTACIÓN DE SILKROAD ");
-    SilkRoad simulador = new SilkRoad(10);
-    simulador.makeVisible();
-    System.out.println("Ruta creada con longitud 10.");
-    simulador.placeStore(2, 40);
-    simulador.placeStore(5, 80);
-    simulador.placeStore(8, 30);
-    System.out.println("Tiendas colocadas en posiciones 2, 5 y 8.");
-    simulador.placeRobot(0);
-    simulador.placeRobot(3);
-    System.out.println("Robots colocados en posiciones 0 y 3.");
-
-    esperar(1500);
-    System.out.println("Moviendo robots manualmente...");
-    simulador.moveRobot(0, 2); 
-    esperar(1500);
-    simulador.moveRobot(3, 2); 
-    esperar(1500);
-    System.out.println("Ganancia total hasta ahora: " + simulador.profit());
-    simulador.resupplyStores();
-    System.out.println("Tiendas reabastecidas.");
-    esperar(1500);
-
-    System.out.println("Moviendo robots automáticamente (buscando la tienda más rentable)...");
-    simulador.moveRobots();
-    esperar(2000);
-    System.out.println("Ganancia total tras movimiento automático: " + simulador.profit());
-
-    System.out.println("Reiniciando simulación...");
-    simulador.reboot();
-    esperar(2000);
-
-    simulador.makeInvisible();
-    System.out.println("FIN DE PRUEBA DE ACEPTACIÓN");
-}
-
-/**
- * Método auxiliar que pausa la ejecución por unos milisegundos
- * para que el usuario pueda observar los cambios visuales.
- */
-private void esperar(int milisegundos) {
-    try {
-        Thread.sleep(milisegundos);
-    } catch (InterruptedException e) {
-        Thread.currentThread().interrupt();
+    //Pruebas de aceptacion
+    /**
+     * Prueba de aceptación visual para la clase SilkRoad.
+     * 
+     * Crea una simulación con tiendas y robots, los mueve y reinicia,
+     */
+    public void testAceptacion() {
+        System.out.println(" INICIO PRUEBA DE ACEPTACIÓN DE SILKROAD ");
+        SilkRoad simulador = new SilkRoad(10);
+        simulador.makeVisible();
+        System.out.println("Ruta creada con longitud 10.");
+        simulador.placeStore(2, 40);
+        simulador.placeStore(5, 80);
+        simulador.placeStore(8, 30);
+        System.out.println("Tiendas colocadas en posiciones 2, 5 y 8.");
+        simulador.placeRobot(0);
+        simulador.placeRobot(3);
+        System.out.println("Robots colocados en posiciones 0 y 3.");
+    
+        esperar(1500);
+        System.out.println("Moviendo robots manualmente...");
+        simulador.moveRobot(0, 2); 
+        esperar(1500);
+        simulador.moveRobot(3, 2); 
+        esperar(1500);
+        System.out.println("Ganancia total hasta ahora: " + simulador.porfit());
+        simulador.resupplyStores();
+        System.out.println("Tiendas reabastecidas.");
+        esperar(1500);
+    
+        System.out.println("Moviendo robots automáticamente (buscando la tienda más rentable)...");
+        simulador.moveRobots();
+        esperar(2000);
+        System.out.println("Ganancia total tras movimiento automático: " + simulador.porfit());
+    
+        System.out.println("Reiniciando simulación...");
+        simulador.reboot();
+        esperar(2000);
+    
+        simulador.makeInvisible();
+        System.out.println("FIN DE PRUEBA DE ACEPTACIÓN");
     }
-}
+
+    /**
+     * Método auxiliar que pausa la ejecución por unos milisegundos
+     * para que el usuario pueda observar los cambios visuales.
+     */
+    private void esperar(int milisegundos) {
+        try {
+            Thread.sleep(milisegundos);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+    }
 }

@@ -43,6 +43,7 @@ public class Robot {
     public void addProfitsInMovements(int profit) {
         this.profitsInMovements.add(profit);
     }
+    
     public void resetRobotLocation(){
         this.location = new int[]{initialLocation[0], initialLocation[1]};
         this.index = this.initialIndex; 

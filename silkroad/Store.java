@@ -4,15 +4,15 @@ import java.util.HashMap;
 public class Store {
     private Rectangle base;  
     private int[] location;
-    private int loc;
+    private int index;
     private int tengeInitial;
     private int tenge;
     private int timesEmpty = 0;
     
-    public Store(int[] location, int tenges, int loc) {
+    public Store(int[] location, int tenges, int index) {
        this.base = new Rectangle(location[0], location[1]);
        this.location = location;
-       this.loc = loc;
+       this.index = index;
        this.tengeInitial = tenges;
        this.tenge = tenges;
        this.base.changeColor("blue");
@@ -49,8 +49,8 @@ public class Store {
         updateVisualState();
     }
     
-    public int getLoc(){
-        return this.loc;
+    public int getIndex(){
+        return this.index;
     }
 
     public void makeVisible(){
