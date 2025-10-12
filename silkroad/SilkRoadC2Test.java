@@ -14,6 +14,7 @@ public class SilkRoadC2Test {
     @Before
     public void setUp() {
         silkRoad = new SilkRoad(10);
+        silkRoad.makeVisible();
         System.setOut(new PrintStream(outContent));
     }
     
