@@ -398,7 +398,6 @@ public class SilkRoadC2Test {
         assertEquals(3, robots[0][0]);
     }
     
-    
     @After
     public void tearDown() {
         System.setOut(originalOut);
