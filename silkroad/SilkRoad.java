@@ -267,59 +267,7 @@ public class SilkRoad {
              robot.addProfitsInMovements(collectedTenges);
          }
      }
-
-    /**
-     * Mueve todos los robots de forma inteligente para maximizar la ganancia total.
-     * Requisito 11: Los robots deciden automáticamente sus movimientos buscando
-     * la tienda con mayor cantidad de tenges disponibles en toda la ruta.
-     * Cada robot se mueve hacia la tienda que le proporcione la máxima ganancia.
-     */
-    public void moveRobots() {
-        if (robots.isEmpty()) {
-            showMessage("No hay robots para mover");
-            return;
-        }
-        
-        ArrayList<Robot> robotsCopy = new ArrayList<>(robots);
-        
-        for (Robot robot : robotsCopy) {
-            int currentLocation = robot.getIndex();
-            int bestMove = 0;
-            int maxGain = 0;
-            
-            for (int distance = -lenRoad; distance <= lenRoad; distance++) {
-                if (distance == 0) continue;
-                
-                int targetLocation = currentLocation + distance;
-                if (targetLocation >= 0 && targetLocation < lenRoad) {
-                    Store store = stores.get(targetLocation);
-                    int gain = (store != null && store.getTenge() > 0) ? store.getTenge() : 0;
-                    
-                    if (gain > maxGain) {
-                        maxGain = gain;
-                        bestMove = distance;
-                    }
-                }
-            }
-
-            if (bestMove != 0 && maxGain > 0) {
-                int newLocation = currentLocation + bestMove;
-                
-                robot.setIndexLocation(newLocation);
-                robot.setLocation(posicion[newLocation]);
-                
-                Store storeAtNewLocation = stores.get(newLocation);
-                if (storeAtNewLocation != null && storeAtNewLocation.getTenge() > 0) {
-                    int totalTenges = robot.getTenge() + maxGain;
-                    robot.setTenge(totalTenges);
-                    storeAtNewLocation.setTenge(0);
-                    storeAtNewLocation.incrementTimesEmpty();
-                    robot.addProfitsInMovements(maxGain);
-                }
-            }
-        }
-    }
-    
+     
     /**
      * Reabastece todas las tiendas que se quedaron sin tenges.
      * Restaura cada tienda a su cantidad inicial de tenges.
@@ -629,9 +577,6 @@ public class SilkRoad {
         }
     }
     
-    
-    
-
 //Pruebas de aceptacion
 /**
  * Prueba de aceptación visual para la clase SilkRoad.
@@ -686,7 +631,5 @@ private void esperar(int milisegundos) {
         Thread.currentThread().interrupt();
     }
 }
-
-
 
 }

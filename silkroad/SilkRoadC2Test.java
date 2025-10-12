@@ -380,47 +380,7 @@ public class SilkRoadC2Test {
         assertEquals("Robot debe permanecer en misma posición", 3, robots[0][0]);
     }
     
-    //MoveRobots
-     @Test
-    public void testMoveRobotsWithStores() {
-        silkRoad.placeStore(1, 50);
-        silkRoad.placeStore(4, 100);
-        silkRoad.placeRobot(0);
-        silkRoad.placeRobot(2);
-        
-        silkRoad.moveRobots();
-        
-        int profit = silkRoad.profit();
-        assertTrue("Debe haber ganancias después de movimiento automático", profit > 0);
-    }
-    
-    @Test
-    public void testMoveRobotsNoRobots() {
-        silkRoad.placeStore(1, 50);
-        silkRoad.moveRobots(); // Sin robots
-        
-        int profit = silkRoad.profit();
-        assertEquals("Sin robots, no debe haber ganancias", 0, profit);
-    }
-    
-    @Test
-    public void testMoveRobotsNoStores() {
-        silkRoad.placeRobot(0);
-        silkRoad.placeRobot(3);
-        silkRoad.moveRobots(); // Sin tiendas
-        
-        int profit = silkRoad.profit();
-        assertEquals("Sin tiendas, no debe haber ganancias", 0, profit);
-    }
-    
-    
-    
-    
-    
-    
-    
     //CAMBIAR ESTAS PRUEBAS DE ACEPTACION PARA LA CLASE SILKROAD
-    
 
     // Combinación de métodos
     /**
