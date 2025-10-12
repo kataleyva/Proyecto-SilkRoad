@@ -21,6 +21,7 @@ public class SilkRoad {
     private final int lenRoad;
     private int[][] posicion;
     private boolean isVisible;
+    private ArrayList<Line> lineasCamino;
 
     /**
      * Constructor de la clase SilkRoad.
@@ -36,12 +37,25 @@ public class SilkRoad {
             this.robots = new ArrayList<>();
             this.posicion = new int[0][0];
             this.isVisible = false;
+            this.lineasCamino = new ArrayList<>();  
         } else {
             this.lenRoad = lengthRoad;
             this.stores = new HashMap<>();
             this.robots = new ArrayList<>();
             this.posicion = Posicion.generateSpiral(lenRoad);
             this.isVisible = false;
+            this.lineasCamino = new ArrayList<>();  
+            crearCaminoVisual();
+        }
+    }
+    
+    private void crearCaminoVisual() {
+        for (int i = 0; i < posicion.length - 1; i++) {
+            Line linea = new Line(
+                posicion[i][0],     posicion[i][1],    
+                posicion[i+1][0],   posicion[i+1][1]    
+            );
+            lineasCamino.add(linea);
         }
     }
     
@@ -91,6 +105,15 @@ public class SilkRoad {
         this.posicion = Posicion.generateSpiral(this.lenRoad);
         this.isVisible = false;
 
+        if (days.length > 0) {
+            create(days[0]);
+        }
+        
+        this.lineasCamino = new ArrayList<>();
+        if (this.lenRoad > 0) {
+            crearCaminoVisual();
+        }
+        
         if (days.length > 0) {
             create(days[0]);
         }
@@ -546,6 +569,11 @@ public class SilkRoad {
      */
     public void makeVisible(){
         isVisible = true;
+        
+        for (Line linea : lineasCamino) {
+            linea.makeVisible();
+        }
+        
         for (Map.Entry<Integer, Store> entry : stores.entrySet()){
             Store store = entry.getValue();
             store.makeVisible();
@@ -563,6 +591,11 @@ public class SilkRoad {
      */
     public void makeInvisible(){
         isVisible = false;
+        
+        for (Line linea : lineasCamino) {
+            linea.makeInvisible();
+        }    
+        
         for (Map.Entry<Integer, Store> entry : stores.entrySet()){
             Store store = entry.getValue();
             store.makeInvisible();
