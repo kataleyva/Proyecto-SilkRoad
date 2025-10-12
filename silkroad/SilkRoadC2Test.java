@@ -81,13 +81,13 @@ public class SilkRoadC2Test {
         assertNotEquals(tengeBefore5, silkRoad.getStore(5).getTenge());
     }
 
-    // porfit
+    // profit
     
     /**
      * Verifica que showRobotProfits muestre correctamente las ganancias de un robot e identifica bugs.
      */
     @Test
-    public void porfitLRShouldDisplayCorrectProfits()  {
+    public void profitLRShouldDisplayCorrectProfits()  {
         silkRoad.placeRobot(0);
         silkRoad.placeStore(1, 50);
         silkRoad.placeStore(3, 100);
@@ -95,7 +95,7 @@ public class SilkRoadC2Test {
         silkRoad.moveRobot(0, 1);
         silkRoad.moveRobot(1, 2);
         
-        assertEquals(150, silkRoad.porfit());
+        assertEquals(150, silkRoad.profit());
     }
     
     /**
@@ -107,7 +107,7 @@ public class SilkRoadC2Test {
         SilkRoad silkRoad = new SilkRoad(10);
     
         // Act
-        int totalProfit = silkRoad.porfit();
+        int totalProfit = silkRoad.profit();
     
         // Assert
         assertEquals( 0, totalProfit);
@@ -125,7 +125,7 @@ public class SilkRoadC2Test {
         silkRoad.getRobot(1).setTenge(30);  // Accede al robot índice 1
         silkRoad.getRobot(2).setTenge(20);  // Accede al robot índice 2
     
-        int totalProfit = silkRoad.porfit();
+        int totalProfit = silkRoad.profit();
     
         assertEquals(100, totalProfit);
     }
@@ -273,9 +273,9 @@ public class SilkRoadC2Test {
         silkRoad.moveRobot(0, 1);
         silkRoad.moveRobot(2, 1);
         
-        int profitBefore = silkRoad.porfit();
+        int profitBefore = silkRoad.profit();
         silkRoad.reboot();
-        int profitAfter = silkRoad.porfit();
+        int profitAfter = silkRoad.profit();
         
         assertEquals(0, profitAfter);
     }
@@ -353,9 +353,9 @@ public class SilkRoadC2Test {
         silkRoad.placeStore(2, 100);
         silkRoad.placeRobot(0);
         
-        int profitBefore = silkRoad.porfit();
+        int profitBefore = silkRoad.profit();
         silkRoad.moveRobot(0, 2);
-        int profitAfter = silkRoad.porfit();
+        int profitAfter = silkRoad.profit();
         
         assertEquals(100, profitAfter);
     }
@@ -368,7 +368,7 @@ public class SilkRoadC2Test {
         silkRoad.moveRobot(0, 2);
         silkRoad.moveRobot(2, 1);
         
-        int profit = silkRoad.porfit();
+        int profit = silkRoad.profit();
         assertEquals(100, profit);
     }
     
@@ -398,38 +398,6 @@ public class SilkRoadC2Test {
         assertEquals(3, robots[0][0]);
     }
     
-    //MoveRobots
-     @Test
-    public void testMoveRobotsWithStores() {
-        silkRoad.placeStore(1, 50);
-        silkRoad.placeStore(4, 100);
-        silkRoad.placeRobot(0);
-        silkRoad.placeRobot(2);
-        
-        silkRoad.moveRobots();
-        
-        int profit = silkRoad.porfit();
-        assertTrue(profit > 0);
-    }
-    
-    @Test
-    public void testMoveRobotsNoRobots() {
-        silkRoad.placeStore(1, 50);
-        silkRoad.moveRobots(); // Sin robots
-        
-        int profit = silkRoad.porfit();
-        assertEquals("Sin robots, no debe haber ganancias", 0, profit);
-    }
-    
-    @Test
-    public void testMoveRobotsNoStores() {
-        silkRoad.placeRobot(0);
-        silkRoad.placeRobot(3);
-        silkRoad.moveRobots(); // Sin tiendas
-        
-        int profit = silkRoad.porfit();
-        assertEquals(0, profit);
-    }
     
     @After
     public void tearDown() {

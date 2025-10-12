@@ -5,6 +5,7 @@ import java.util.Arrays;
 import javax.swing.JOptionPane;
 import java.util.List;
 import java.util.*;
+import java.awt.*;
 
 /**
  * Clase que representa el simulador de la Ruta de la Seda.
@@ -41,10 +42,40 @@ public class SilkRoad {
             this.stores = new HashMap<>();
             this.robots = new ArrayList<>();
             this.posicion = Posicion.generateSpiral(lenRoad);
+            this.drawSpiral();
             this.isVisible = false;
         }
     }
     
+    public void drawSpiral() {
+        if (posicion == null || posicion.length == 0) {
+            System.out.println("No hay posiciones para dibujar.");
+            return;
+        }
+    
+        Canvas canvas = Canvas.getCanvas();
+        int lado = 20;  // tamaño del cuadrado
+        int centroX = 300;
+        int centroY = 300;
+    
+        for (int i = 0; i < posicion.length; i++) {
+            int x = centroX + posicion[i][0];
+            int y = centroY - posicion[i][1];
+    
+            // Crear un cuadrado como polígono (sin usar Rectangle)
+            int[] xPoints = {x, x + lado, x + lado, x};
+            int[] yPoints = {y, y, y + lado, y + lado};
+            Polygon cuadrado = new Polygon(xPoints, yPoints, 4);
+    
+            canvas.draw(cuadrado, "black", cuadrado);
+    
+            // Si quieres animación, deja esta línea:
+            // canvas.wait(40);
+        }
+    
+        this.isVisible = true;
+    }
+
     /**
      * Constructor que crea una ruta de seda con configuración multi-día.
      * Requisito 10: Permite crear una ruta de seda con la entrada del problema de la maratón
@@ -453,7 +484,7 @@ public class SilkRoad {
      * 
      * @return Cantidad total de tenges obtenida por todos los robots.
      */
-    public int porfit(){
+    public int profit(){
         int totalProfit = 0;
         for(Robot robot : robots){
             totalProfit += robot.getTenge();
@@ -639,6 +670,7 @@ public class SilkRoad {
                                         JOptionPane.INFORMATION_MESSAGE);
         }
     }
+    
     //Pruebas de aceptacion
     /**
      * Prueba de aceptación visual para la clase SilkRoad.
@@ -664,7 +696,7 @@ public class SilkRoad {
         esperar(1500);
         simulador.moveRobot(3, 2); 
         esperar(1500);
-        System.out.println("Ganancia total hasta ahora: " + simulador.porfit());
+        System.out.println("Ganancia total hasta ahora: " + simulador.profit());
         simulador.resupplyStores();
         System.out.println("Tiendas reabastecidas.");
         esperar(1500);
@@ -672,7 +704,7 @@ public class SilkRoad {
         System.out.println("Moviendo robots automáticamente (buscando la tienda más rentable)...");
         simulador.moveRobots();
         esperar(2000);
-        System.out.println("Ganancia total tras movimiento automático: " + simulador.porfit());
+        System.out.println("Ganancia total tras movimiento automático: " + simulador.profit());
     
         System.out.println("Reiniciando simulación...");
         simulador.reboot();
@@ -686,7 +718,7 @@ public class SilkRoad {
      * Prueba de aceptación completa que demuestra el ciclo completo del simulador
      * con visualización gráfica y mensajes en consola.
      */
-    public void testAceptacionCompleta() {
+    public void testAceptacion2() {
         
         makeVisible();
         System.out.println(" Ruta creada con longitud " + lenRoad);
@@ -727,7 +759,7 @@ public class SilkRoad {
         System.out.println("Robot movido de posición 10 a 12 (recolecta 120 tenges)");
         esperar(1500);
         
-        int gananciaFase1 = porfit();
+        int gananciaFase1 = profit();
         System.out.println("\nGanancia después de movimientos manuales: " + gananciaFase1 + " tenges");
         esperar(2000);
         
@@ -755,14 +787,14 @@ public class SilkRoad {
         
         // Movimiento automático
         System.out.println("Los robots buscarán automáticamente la tienda más rentable...");
-        int profitAntes = porfit();
+        int profitAntes = profit();
         System.out.println("Ganancia antes del movimiento: " + profitAntes + " tenges");
         esperar(1500);
         
         moveRobots();
         esperar(2000);
         
-        int profitDespues = porfit();
+        int profitDespues = profit();
         int gananciaObtenida = profitDespues - profitAntes;
         System.out.println("Robots movidos automáticamente");
         System.out.println("Ganancia obtenida en esta fase: " + gananciaObtenida + " tenges");
@@ -798,11 +830,124 @@ public class SilkRoad {
         reboot();
         esperar(1500);
         
-        int gananciaFinal = porfit();
+        int gananciaFinal = profit();
         System.out.println("Sistema reiniciado correctamente:");
         esperar(2000);
         
         makeInvisible();
+    }
+    ////////////////////////   
+    /**
+     * Prueba de aceptación completa que demuestra el ciclo completo del simulador
+     * con visualización y notificaciones mediante popups.
+     */
+    public void testAceptacionOpcion() {
+        makeVisible();
+        showMessage("INICIO PRUEBA DE ACEPTACIÓN COMPLETA\n\nRuta creada con longitud " + lenRoad);
+        
+        // Configuración inicial
+        placeStore(2, 100);
+        placeStore(5, 75);
+        placeStore(8, 50);
+        placeStore(12, 120);
+        showMessage("Tiendas colocadas:\n- Posición 2: 100 tenges\n- Posición 5: 75 tenges\n- Posición 8: 50 tenges\n- Posición 12: 120 tenges");
+        esperar(1500);
+        
+        placeRobot(0);
+        placeRobot(4);
+        placeRobot(10);
+        showMessage("Robots colocados en posiciones 0, 4 y 10");
+        esperar(2000);
+        
+        // FASE 1: Movimiento manual
+        showMessage("FASE 1: Movimiento Manual\n\nLos robots se moverán manualmente a las tiendas");
+        esperar(1000);
+        
+        moveRobot(0, 2);
+        esperar(1500);
+        moveRobot(4, 1);
+        esperar(1500);
+        moveRobot(10, 2);
+        esperar(1500);
+        
+        int gananciaFase1 = profit();
+        showMessage("Ganancia después de movimientos manuales:\n" + gananciaFase1 + " tenges");
+        esperar(2000);
+        
+        // FASE 2: Historial de tiendas vaciadas
+        int[][] historial = emptiedStores();
+        StringBuilder historialMsg = new StringBuilder("FASE 2: Historial de Tiendas\n\n");
+        for (int i = 0; i < historial.length; i++) {
+            historialMsg.append("Tienda posición ").append(historial[i][0])
+                       .append(": vaciada ").append(historial[i][1]).append(" vez(es)\n");
+        }
+        showMessage(historialMsg.toString());
+        esperar(2000);
+        
+        // FASE 3: Reabastecimiento
+        showMessage("FASE 3: Reabastecimiento\n\nReabasteciendo tiendas vacías...");
+        resupplyStores();
+        esperar(1500);
+        
+        int[][] tiendasReabastecidas = stores();
+        StringBuilder tiendasMsg = new StringBuilder("Tiendas reabastecidas:\n\n");
+        for (int i = 0; i < tiendasReabastecidas.length; i++) {
+            tiendasMsg.append("Posición ").append(tiendasReabastecidas[i][0])
+                     .append(": ").append(tiendasReabastecidas[i][1]).append(" tenges\n");
+        }
+        showMessage(tiendasMsg.toString());
+        esperar(2000);
+        
+        // FASE 4: Movimiento automático
+        showMessage("FASE 4: Movimiento Automático (IA)\n\nLos robots buscarán automáticamente la tienda más rentable");
+        esperar(1500);
+        
+        moveRobots();
+        esperar(2000);
+        
+        int gananciaFase4 = profit();
+        showMessage("Ganancia total tras movimiento automático:\n" + gananciaFase4 + " tenges");
+        esperar(2000);
+        
+        // FASE 5: Estado actual de robots
+        int[][] robotsInfo = robots();
+        StringBuilder robotsMsg = new StringBuilder("FASE 5: Estado de Robots\n\n");
+        for (int i = 0; i < robotsInfo.length; i++) {
+            robotsMsg.append("Robot en posición ").append(robotsInfo[i][0])
+                    .append(": ").append(robotsInfo[i][1]).append(" tenges\n");
+        }
+        showMessage(robotsMsg.toString());
+        esperar(2000);
+        
+        // FASE 6: Ganancias por movimiento
+        int[][] profitsPorMov = profitPerMove();
+        StringBuilder profitsMsg = new StringBuilder("FASE 6: Ganancias por Movimiento\n\n");
+        for (int i = 0; i < profitsPorMov.length; i++) {
+            profitsMsg.append("Robot pos ").append(profitsPorMov[i][0]).append(": [");
+            for (int j = 1; j < profitsPorMov[i].length; j++) {
+                if (profitsPorMov[i][j] > 0) {
+                    profitsMsg.append(profitsPorMov[i][j]);
+                    if (j < profitsPorMov[i].length - 1 && profitsPorMov[i][j+1] > 0) {
+                        profitsMsg.append(", ");
+                    }
+                }
+            }
+            profitsMsg.append("]\n");
+        }
+        showMessage(profitsMsg.toString());
+        esperar(2000);
+        
+        // FASE 7: Reinicio
+        showMessage("FASE 7: Reinicio del Sistema\n\nReiniciando simulación completa...");
+        reboot();
+        esperar(1500);
+        
+        int gananciaFinal = profit();
+        showMessage("Sistema reiniciado correctamente:\n\n- Ganancia: " + gananciaFinal + " tenges\n- Robots en posiciones iniciales\n- Tiendas restauradas");
+        esperar(2000);
+        
+        makeInvisible();
+        showMessage("FIN DE PRUEBA DE ACEPTACIÓN COMPLETA");
     }
     
     public Store getStore(int position){
