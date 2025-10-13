@@ -2,6 +2,8 @@ import java.util.HashMap;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.*;
+import javax.swing.JOptionPane;
 
 /**
  * Clase que resuelve el problema de optimización de la Ruta de la Seda
@@ -112,96 +114,152 @@ public class SilkRoadContest {
     }
     
     /**
-     * Constructor de la clase SilkRoadContest.
-     * Inicializa el simulador con la longitud suficiente
-     * para cubrir todas las posiciones de los días dados.
-     *
-     * @param days Matriz con la configuración de cada día.
+     * Constructor que recibe los días en formato de matriz
+     * @param days Cada fila: [tipo, posición, (tenges si tipo=2)]
      */
     public SilkRoadContest(int[][] days) {
         if (days == null || days.length == 0) {
             throw new IllegalArgumentException("No hay datos de días para simular.");
         }
-        // El constructor de SilkRoad con days calcula la longitud automáticamente
-        this.simulator = new SilkRoad(days);
+        
+        // Calcular longitud máxima
+        int maxPosition = 0;
+        for (int[] day : days) {
+            if (day.length >= 2) {
+                maxPosition = Math.max(maxPosition, day[1]);
+            }
+        }
+        
+        this.simulator = new SilkRoad(maxPosition + 1);
     }
-
+    
     /**
-     * Simula la ejecución del problema de la maratón de programación.
-     * Usa los métodos de SilkRoad para crear las configuraciones diarias,
-     * mover los robots automáticamente, calcular las ganancias y reiniciar
-     * entre días.
-     *
-     * @param days Matriz donde cada fila representa un día:
-     *             [n, s1, t1, s2, t2, ..., sn, tn, r1, r2, ...]
+     * Simula el problema de la maratón día por día con visualización
+     * CORREGIDO: Funciona acumulativamente según las reglas del problema ICPC
+     * 
+     * @param days Matriz donde cada fila es [tipo, posición, (tenges)]
+     * @param slow Si true, hace pausas para visualización
      */
-    public void simulate(int[][] days) {
+    public void simulate(int[][] days, boolean slow) {
         if (days == null || days.length == 0) {
             System.out.println("No hay datos para simular.");
             return;
         }
-            
-        System.out.println("=== INICIO DE SIMULACIÓN MARATÓN ===");
-        simulator.makeVisible();
-        esperar(1000);
-    
-        for (int d = 0; d < days.length; d++) {
-            System.out.println("\n--- Día " + (d + 1) + " ---");
-    
-            // Día 1 ya fue creado automáticamente por el constructor de SilkRoad(days)
-            if (d > 0) {
-                // Reiniciar: reabastecer tiendas y devolver robots al inicio
-                simulator.reboot();
-                // Agregar las nuevas tiendas y robots de este día
-            simulator.create(days[d]);
-            } else {
-            // Solo reiniciar al principio del día 1
-                simulator.reboot();
-            }
-    
-            esperar(1000);
-    
-            // Mostrar tiendas y robots del día actual
-            mostrarConfiguracion(simulator);
         
-            // Mover robots automáticamente
-            System.out.println("Moviendo robots automáticamente...");
+        simulator.makeVisible();
+        
+        int[] ganancias = new int[days.length];
+        
+        for (int i = 0; i < days.length; i++) {
+            System.out.println("┌─── DÍA " + (i + 1) + " ───────────────────────────────────┐");
+            
+            // PASO 1: Reabastecer y retornar (excepto día 1)
+            if (i > 0) {
+                simulator.resupplyStores();
+                simulator.returnRobots();
+                resetRobotProfits();
+                System.out.println("Tiendas reabastecidas");
+                System.out.println("Robots retornados");
+                System.out.println("Ganancias reseteadas");
+            }
+            
+            if (slow) simulator.esperar(800);
+            
+            // PASO 2: Agregar nuevo elemento del día
+            int[] day = days[i];
+            int tipo = day[0];
+            int posicion = day[1];
+            
+            if (tipo == 1) {
+                simulator.placeRobot(posicion);
+                System.out.println("ROBOT en posición " + posicion);
+            } else if (tipo == 2) {
+                int tenges = day[2];
+                simulator.placeStore(posicion, tenges);
+                System.out.println("TIENDA en pos " + posicion + " con " + tenges + " tenges");
+            }
+            
+            if (slow) simulator.esperar(1000);
+            
+            // PASO 3: Mostrar estado
+            System.out.println("");
+            mostrarEstadoActual();
+            
+            if (slow) simulator.esperar(1000);
+            
+            // PASO 4: Mover robots
+            System.out.println("Moviendo robots...");
             simulator.moveRobots();
-            esperar(1500);
-    
-            // Calcular ganancia del día
+            
+            if (slow) simulator.esperar(1500);
+            
+            // PASO 5: Calcular ganancia
             int ganancia = simulator.profit();
-            System.out.println("Ganancia total del día " + (d + 1) + ": " + ganancia + " tenges");
+            ganancias[i] = ganancia;
+            
+            System.out.println("GANANCIA DEL DÍA: " + ganancia + " tenges");
+            
+            if (slow) simulator.esperar(2000);
+        }
+        
+        // Mostrar resumen
+        mostrarResumen(ganancias);
+    }
     
-            // Mostrar tiendas vaciadas
-            int[][] vacias = simulator.emptiedStores();
-            for (int i = 0; i < vacias.length; i++) {
-                System.out.println("  Tienda en pos " + vacias[i][0] + " vaciada " + vacias[i][1] + " vez(es)");
+    /**
+     * Resetea las ganancias de todos los robots a 0
+     * (simula el inicio de un nuevo día)
+     */
+    private void resetRobotProfits() {
+        int[][] robotsInfo = simulator.robots();
+        for (int i = 0; i < robotsInfo.length; i++) {
+            Robot robot = simulator.getRobot(i);
+            if (robot != null) {
+                robot.resetProfits();
             }
         }
-
-
-        simulator.makeInvisible();
-        System.out.println("\n=== FIN DE SIMULACIÓN ===");
     }
-
+    
     /**
-     * Muestra las tiendas y robots actuales del simulador.
+     * Muestra el estado actual de tiendas y robots
      */
-    private void mostrarConfiguracion(SilkRoad sim) {
-        System.out.println("Tiendas:");
-        int[][] tiendas = sim.stores();
+    private void mostrarEstadoActual() {
+        int[][] tiendas = simulator.stores();
+        int[][] robots = simulator.robots();
+        
+        System.out.println("Tiendas (" + tiendas.length + "):");
         for (int i = 0; i < tiendas.length; i++) {
-            System.out.println("  → Posición " + tiendas[i][0] + " con " + tiendas[i][1] + " tenges");
+            System.out.println("Pos " + tiendas[i][0] + ": " + tiendas[i][1] + " tenges");
         }
-
-        System.out.println("Robots:");
-        int[][] robs = sim.robots();
-        for (int i = 0; i < robs.length; i++) {
-            System.out.println("  → Robot en posición " + robs[i][0]);
+        
+        System.out.println("Robots (" + robots.length + "):");
+        for (int i = 0; i < robots.length; i++) {
+            System.out.println("Pos " + robots[i][0] + ": " + robots[i][1] + " tenges");
         }
     }
-
+    
+    /**
+     * Muestra el resumen final de ganancias
+     */
+    private void mostrarResumen(int[] ganancias) {
+        StringBuilder resumen = new StringBuilder();
+        
+        for (int i = 0; i < ganancias.length; i++) {
+            String linea = String.format("Día %2d: %5d tenges /n", 
+                                        (i + 1), ganancias[i]);
+            resumen.append(linea);
+        }
+        
+        System.out.println("\n" + resumen.toString());
+        
+        JOptionPane.showMessageDialog(
+            null,
+            resumen.toString(),
+            "Resultados - Silk Road Contest",
+            JOptionPane.INFORMATION_MESSAGE
+        );
+    }
+    
     /**
      * Método auxiliar para pausar la simulación.
      */

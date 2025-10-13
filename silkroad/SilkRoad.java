@@ -268,32 +268,46 @@ public class SilkRoad {
      * @param meters Distancia a mover en metros. Positivo para avanzar, negativo para retroceder.
      */
     public void moveRobot(int location, int meters) {
-         if (meters == 0) return;
+        if (meters == 0) return;
          
-         Robot robot = getFirstRobotAtLocation(location);
-         if (robot == null) {
-             showMessage("No hay robot en la posición " + location);
-             return;
-         }
+        Robot robot = getFirstRobotAtLocation(location);
+        if (robot == null) {
+            showMessage("No hay robot en la posición " + location);
+            return;
+        }
 
-         int newLocation = location + meters;
-         if (newLocation < 0 || newLocation >= lenRoad) {
-             showMessage("Movimiento inválido: posición " + newLocation + " fuera de rango");
-             return;
-         }
+        int newLocation = location + meters;
+        if (newLocation < 0 || newLocation >= lenRoad) {
+            showMessage("Movimiento inválido: posición " + newLocation + " fuera de rango");
+            return;
+        }
          
-         robot.setIndexLocation(newLocation);
-         robot.setLocation(posicion[newLocation]);
          
-         Store storeAtNewLocation = stores.get(newLocation);
-         if (storeAtNewLocation != null && storeAtNewLocation.getTenge() > 0) {
-             int collectedTenges = storeAtNewLocation.getTenge();
-             int totalTenges = robot.getTenge() + collectedTenges;
-             robot.setTenge(totalTenges);
-             storeAtNewLocation.setTenge(0);
-             storeAtNewLocation.incrementTimesEmpty();
-             robot.addProfitsInMovements(collectedTenges);
-         }
+        int distancia = Math.abs(meters);
+        int costoMovimiento = distancia; 
+
+        if (robot.getTenge() < costoMovimiento) {
+            showMessage("El robot no tiene suficientes tenges para moverse " + distancia + " unidades.");
+            return;
+        }
+
+        int tengesActuales = robot.getTenge() - costoMovimiento;
+        robot.setTenge(tengesActuales);
+    
+        robot.setIndexLocation(newLocation);
+        robot.setLocation(posicion[newLocation]);
+        
+        Store storeAtNewLocation = stores.get(newLocation);
+        if (storeAtNewLocation != null && storeAtNewLocation.getTenge() > 0) {
+            int collectedTenges = storeAtNewLocation.getTenge();
+            int totalTenges = robot.getTenge() + collectedTenges;
+            robot.setTenge(totalTenges);
+            storeAtNewLocation.setTenge(0);
+            storeAtNewLocation.incrementTimesEmpty();
+            robot.addProfitsInMovements(collectedTenges);
+        } else {
+           robot.addProfitsInMovements(robot.getTenge());
+        }
      }
 
     /**
