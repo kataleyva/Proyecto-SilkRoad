@@ -15,7 +15,8 @@ import java.util.Map;
  * - Antes de cada día: reabastecimiento y reset de posiciones
  */
 public class SilkRoadContest {
-    
+    private SilkRoad simulator;
+    //////////
     private HashMap<Integer, Integer> allStores;              
     private ArrayList<Integer> allRobots;                     
     private int currentDay;                                
@@ -37,29 +38,29 @@ public class SilkRoadContest {
      * 
      * @throws IllegalArgumentException si days es null o vacío
      */
-    public SilkRoadContest(int[][] days) {
-        if (days == null || days.length == 0) {
-            throw new IllegalArgumentException("El array de días no puede ser null o vacío");
-        }
-        
-        this.days = days;
-        this.currentDay = 0;
-        this.maxDailyUtility = 0;
-        this.optimalRobotPositions = new ArrayList<>();
-        this.optimalDistances = new ArrayList<>();
-        this.allStores = new HashMap<>();         
-        this.allRobots = new ArrayList<>();   
-        int maxPos = 0;
-        for (int[] day : days) {
-            if (day.length >= 2 && day[1] > maxPos) {
-                maxPos = day[1];
-            }
-        }
+    //public SilkRoadContest(int[][] days) {
+    //    if (days == null || days.length == 0) {
+    //        throw new IllegalArgumentException("El array de días no puede ser null o vacío");
+    //    }
+    //    
+    //    this.days = days;
+    //    this.currentDay = 0;
+    //    this.maxDailyUtility = 0;
+    //    this.optimalRobotPositions = new ArrayList<>();
+    //    this.optimalDistances = new ArrayList<>();
+    //    this.allStores = new HashMap<>();         
+    //    this.allRobots = new ArrayList<>();   
+    //    int maxPos = 0;
+    //    for (int[] day : days) {
+    //        if (day.length >= 2 && day[1] > maxPos) {
+    //            maxPos = day[1];
+    //        }
+    //    }
 
-        if (maxPos > 0) {
-            this.posiciones = Posicion.generateSpiral(maxPos + 1);
-        }
-    }
+    //    if (maxPos > 0) {
+    //        this.posiciones = Posicion.generateSpiral(maxPos + 1);
+    //    }
+    //}
     
     /**
      * Constructor alternativo para un solo día.
@@ -108,6 +109,108 @@ public class SilkRoadContest {
         }
         
         return results;
+    }
+    
+    /**
+     * Constructor de la clase SilkRoadContest.
+     * Inicializa el simulador con la longitud suficiente
+     * para cubrir todas las posiciones de los días dados.
+     *
+     * @param days Matriz con la configuración de cada día.
+     */
+    public SilkRoadContest(int[][] days) {
+        if (days == null || days.length == 0) {
+            throw new IllegalArgumentException("No hay datos de días para simular.");
+        }
+        // El constructor de SilkRoad con days calcula la longitud automáticamente
+        this.simulator = new SilkRoad(days);
+    }
+
+    /**
+     * Simula la ejecución del problema de la maratón de programación.
+     * Usa los métodos de SilkRoad para crear las configuraciones diarias,
+     * mover los robots automáticamente, calcular las ganancias y reiniciar
+     * entre días.
+     *
+     * @param days Matriz donde cada fila representa un día:
+     *             [n, s1, t1, s2, t2, ..., sn, tn, r1, r2, ...]
+     */
+    public void simulate(int[][] days) {
+        if (days == null || days.length == 0) {
+            System.out.println("No hay datos para simular.");
+            return;
+        }
+            
+        System.out.println("=== INICIO DE SIMULACIÓN MARATÓN ===");
+        simulator.makeVisible();
+        esperar(1000);
+    
+        for (int d = 0; d < days.length; d++) {
+            System.out.println("\n--- Día " + (d + 1) + " ---");
+    
+            // Día 1 ya fue creado automáticamente por el constructor de SilkRoad(days)
+            if (d > 0) {
+                // Reiniciar: reabastecer tiendas y devolver robots al inicio
+                simulator.reboot();
+                // Agregar las nuevas tiendas y robots de este día
+            simulator.create(days[d]);
+            } else {
+            // Solo reiniciar al principio del día 1
+                simulator.reboot();
+            }
+    
+            esperar(1000);
+    
+            // Mostrar tiendas y robots del día actual
+            mostrarConfiguracion(simulator);
+        
+            // Mover robots automáticamente
+            System.out.println("Moviendo robots automáticamente...");
+            simulator.moveRobots();
+            esperar(1500);
+    
+            // Calcular ganancia del día
+            int ganancia = simulator.profit();
+            System.out.println("Ganancia total del día " + (d + 1) + ": " + ganancia + " tenges");
+    
+            // Mostrar tiendas vaciadas
+            int[][] vacias = simulator.emptiedStores();
+            for (int i = 0; i < vacias.length; i++) {
+                System.out.println("  Tienda en pos " + vacias[i][0] + " vaciada " + vacias[i][1] + " vez(es)");
+            }
+        }
+
+
+        simulator.makeInvisible();
+        System.out.println("\n=== FIN DE SIMULACIÓN ===");
+    }
+
+    /**
+     * Muestra las tiendas y robots actuales del simulador.
+     */
+    private void mostrarConfiguracion(SilkRoad sim) {
+        System.out.println("Tiendas:");
+        int[][] tiendas = sim.stores();
+        for (int i = 0; i < tiendas.length; i++) {
+            System.out.println("  → Posición " + tiendas[i][0] + " con " + tiendas[i][1] + " tenges");
+        }
+
+        System.out.println("Robots:");
+        int[][] robs = sim.robots();
+        for (int i = 0; i < robs.length; i++) {
+            System.out.println("  → Robot en posición " + robs[i][0]);
+        }
+    }
+
+    /**
+     * Método auxiliar para pausar la simulación.
+     */
+    private void esperar(int ms) {
+        try {
+            Thread.sleep(ms);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
     }
     
     /**

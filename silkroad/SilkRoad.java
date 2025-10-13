@@ -846,7 +846,7 @@ public class SilkRoad {
      * Método auxiliar que pausa la ejecución por unos milisegundos
      * para que el usuario pueda observar los cambios visuales.
      */
-    private void esperar(int milisegundos) {
+    public void esperar(int milisegundos) {
         try {
             Thread.sleep(milisegundos);
         } catch (InterruptedException e) {
