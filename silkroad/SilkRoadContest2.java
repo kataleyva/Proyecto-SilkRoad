@@ -46,7 +46,7 @@ public class SilkRoadContest2 {
         int[] ganancias = new int[days.length];
         
         for (int i = 0; i < days.length; i++) {
-            System.out.println("┌─── DÍA " + (i + 1) + " ───────────────────────────────────┐");
+            System.out.println(" DÍA " + (i + 1));
             
             // PASO 1: Reabastecer y retornar (excepto día 1)
             if (i > 0) {
@@ -140,7 +140,7 @@ public class SilkRoadContest2 {
         StringBuilder resumen = new StringBuilder();
         
         for (int i = 0; i < ganancias.length; i++) {
-            String linea = String.format("Día %2d: %5d tenges /n", 
+            String linea = String.format("Día %2d: %5d tenges \n", 
                                         (i + 1), ganancias[i]);
             resumen.append(linea);
         }
