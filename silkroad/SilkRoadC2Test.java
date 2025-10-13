@@ -96,7 +96,7 @@ public class SilkRoadC2Test {
         silkRoad.moveRobot(0, 1);
         silkRoad.moveRobot(1, 2);
         
-        assertEquals(150, silkRoad.profit());
+        assertEquals(147, silkRoad.profit());
     }
     
     /**
@@ -358,7 +358,7 @@ public class SilkRoadC2Test {
         silkRoad.moveRobot(0, 2);
         int profitAfter = silkRoad.profit();
         
-        assertEquals(100, profitAfter);
+        assertEquals(98, profitAfter);
     }
     
     @Test
@@ -370,7 +370,7 @@ public class SilkRoadC2Test {
         silkRoad.moveRobot(2, 1);
         
         int profit = silkRoad.profit();
-        assertEquals(100, profit);
+        assertEquals(97, profit);
     }
     
     @Test
@@ -403,8 +403,8 @@ public class SilkRoadC2Test {
     public void tearDown() {
         System.setOut(originalOut);
         if (silkRoad != null) {
-            //silkRoad.finish();
-            silkRoad.makeInvisible();
+            silkRoad.finish();
+            //silkRoad.makeInvisible();
         }
     }
     

@@ -283,32 +283,25 @@ public class SilkRoad {
         }
          
          
-        int distancia = Math.abs(meters);
-        int costoMovimiento = distancia; 
-
-        if (robot.getTenge() < costoMovimiento) {
-            showMessage("El robot no tiene suficientes tenges para moverse " + distancia + " unidades.");
-            return;
-        }
-
-        int tengesActuales = robot.getTenge() - costoMovimiento;
-        robot.setTenge(tengesActuales);
+        int distance = Math.abs(meters);
     
         robot.setIndexLocation(newLocation);
         robot.setLocation(posicion[newLocation]);
         
         Store storeAtNewLocation = stores.get(newLocation);
+        int collectedTenges = 0;
+        
         if (storeAtNewLocation != null && storeAtNewLocation.getTenge() > 0) {
-            int collectedTenges = storeAtNewLocation.getTenge();
-            int totalTenges = robot.getTenge() + collectedTenges;
-            robot.setTenge(totalTenges);
+            collectedTenges = storeAtNewLocation.getTenge();
             storeAtNewLocation.setTenge(0);
             storeAtNewLocation.incrementTimesEmpty();
-            robot.addProfitsInMovements(collectedTenges);
-        } else {
-           robot.addProfitsInMovements(robot.getTenge());
         }
-     }
+        
+        int gananciaNeta = collectedTenges - distance;
+        robot.setTenge(robot.getTenge() + gananciaNeta);
+        
+        robot.addProfitsInMovements(gananciaNeta);
+    }
 
     /**
      * Mueve todos los robots de forma inteligente para maximizar la ganancia total.
@@ -322,12 +315,16 @@ public class SilkRoad {
             return;
         }
         
+        if (stores.isEmpty()){
+            return;
+        }
         ArrayList<Robot> robotsCopy = new ArrayList<>(robots);
+        HashSet<Integer> visitedStores = new HashSet<>();
         
         for (Robot robot : robotsCopy) {
             int currentLocation = robot.getIndex();
             int bestMove = 0;
-            int maxGain = 0;
+            int maxNetGain = 0;
             
             for (int distance = -lenRoad; distance <= lenRoad; distance++) {
                 if (distance == 0) continue;
@@ -335,28 +332,39 @@ public class SilkRoad {
                 int targetLocation = currentLocation + distance;
                 if (targetLocation >= 0 && targetLocation < lenRoad) {
                     Store store = stores.get(targetLocation);
-                    int gain = (store != null && store.getTenge() > 0) ? store.getTenge() : 0;
+                    if (store != null && store.getTenge() > 0 && !visitedStores.contains(targetLocation)) {
+                        int tengesEnTienda = store.getTenge();
+                        int distancia = Math.abs(distance);
                     
-                    if (gain > maxGain) {
-                        maxGain = gain;
-                        bestMove = distance;
+                        int netGain = tengesEnTienda - distancia;
+                    
+                        if (netGain > 0 && netGain > maxNetGain) {
+                            maxNetGain = netGain;
+                            bestMove = distance;
+                        }
                     }
                 }
             }
 
-            if (bestMove != 0 && maxGain > 0) {
+            if (bestMove != 0 && maxNetGain > 0) {
                 int newLocation = currentLocation + bestMove;
+                int distanciaRecorrida = Math.abs(bestMove);
                 
                 robot.setIndexLocation(newLocation);
                 robot.setLocation(posicion[newLocation]);
                 
                 Store storeAtNewLocation = stores.get(newLocation);
                 if (storeAtNewLocation != null && storeAtNewLocation.getTenge() > 0) {
-                    int totalTenges = robot.getTenge() + maxGain;
-                    robot.setTenge(totalTenges);
+                    int tengesRecogidos = storeAtNewLocation.getTenge();
+                
+                    int gananciaNeta = tengesRecogidos - distanciaRecorrida;
+                
+                    robot.setTenge(robot.getTenge() + gananciaNeta);
                     storeAtNewLocation.setTenge(0);
                     storeAtNewLocation.incrementTimesEmpty();
-                    robot.addProfitsInMovements(maxGain);
+                    robot.addProfitsInMovements(gananciaNeta);
+                
+                    visitedStores.add(newLocation);
                 }
             }
         }
@@ -447,6 +455,7 @@ public class SilkRoad {
         Robot rb = robs.get(indices.get(0));
         for (int j = 0; j < 2; j++) {
             rb.makeInvisible();
+            esperar(1500);
             rb.makeVisible();
         }
     }
@@ -625,19 +634,20 @@ public class SilkRoad {
      * Libera todos los recursos (tiendas y robots) y cierra la aplicación.
      */
     public void finish(){
-        for (Map.Entry<Integer, Store> entry : stores.entrySet()){
-            Store store = entry.getValue();
+        for (Store store : stores.values()){
             store.makeInvisible();
         }
         
         for (Robot robot : robots){
-            robot.removeRobot();
+            robot.makeInvisible();
         }
         
         stores.clear();
         robots.clear();
-        
-        System.exit(0);
+        makeInvisible();
+        showMessage("Juego finalizado\n");
+        showMessage("Cantidad de tiendas:"+ stores.size() + "\n");
+        showMessage("Cantidad de robots:"+ robots.size() + "\n");
     }
 
     /**
