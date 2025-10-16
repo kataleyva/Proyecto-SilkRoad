@@ -57,45 +57,42 @@ public class SilkRoad {
             );
             lineasCamino.add(linea);
         }
-    }
+    }   
     
     /**
-     * Constructor que crea una ruta de seda con configuración multi-día.
-     * Requisito 10: Permite crear una ruta de seda con la entrada del problema de la maratón
-     * donde cada día puede tener una configuración diferente.
-     * La longitud de la ruta se calcula automáticamente basándose en la posición
-     * máxima encontrada en todos los días.
-     * 
-     * @param days Matriz donde cada fila representa la configuración de un día.
-     *             Formato por fila: [n, s1, t1, s2, t2, ..., sn, tn, r1, r2, ...]
-     *             donde n es el número de tiendas, si y ti son posición y tenges,
-     *             y ri son las posiciones iniciales de los robots.
-     */
-    public SilkRoad(int days[][]) {
+    * Constructor que crea una ruta de seda con configuración acumulativa por días.
+    * 
+    * Según las especificaciones de la maratón:
+    * - Cada día representa una acción (agregar robot o tienda)
+    * - Formato: [1, x] → agregar robot en posición x
+    *           [2, x, c] → agregar tienda en posición x con c tenges
+    * 
+    * La longitud de la ruta se calcula automáticamente basándose en la posición
+    * máxima encontrada en todos los días.
+    * 
+    * @param days Matriz donde cada fila representa una acción de un día.
+    *             - Fila i: [1, x] → agregar robot
+    *             - Fila i: [2, x, c] → agregar tienda
+    * 
+    * @throws IllegalArgumentException si days es null o vacío
+    */
+    public SilkRoad(int[][] days) {
         if (days == null || days.length == 0) {
             this.lenRoad = 0;
             this.stores = new HashMap<>();
             this.robots = new ArrayList<>();
             this.posicion = new int[0][0];
             this.isVisible = false;
+            this.lineasCamino = new ArrayList<>();
             return;
         }
-        
         int maxPosition = 0;
         for (int[] day : days) {
-            if (day.length > 0) {
-                int n = day[0];
-
-                for (int i = 0; i < n && (1 + 2*i) < day.length; i++) {
-                    if (day[1 + 2*i] > maxPosition) {
-                        maxPosition = day[1 + 2*i];
-                    }
-                }
-
-                for (int i = 1 + 2*n; i < day.length; i++) {
-                    if (day[i] > maxPosition) {
-                        maxPosition = day[i];
-                    }
+            if (day.length >= 2) {
+                int actionType = day[0];
+                int position = day[1];
+                if (position > maxPosition) {
+                    maxPosition = position;
                 }
             }
         }
@@ -104,59 +101,46 @@ public class SilkRoad {
         this.robots = new ArrayList<>();
         this.posicion = Posicion.generateSpiral(this.lenRoad);
         this.isVisible = false;
-
-        if (days.length > 0) {
-            create(days[0]);
-        }
-        
         this.lineasCamino = new ArrayList<>();
         if (this.lenRoad > 0) {
             crearCaminoVisual();
         }
-        
-        if (days.length > 0) {
-            create(days[0]);
-        }
-    }
-    
-    /**
-     * Crea una ruta de seda con la entrada del problema de la maratón de programación.
-     * Requisito 10: Permite crear una ruta de seda basada en el formato del problema.
-     * 
-     * @param input Array de enteros que representa la entrada del problema de la maratón.
-     *              Formato: [n, s1, t1, s2, t2, ..., sn, tn, r1, r2, ..., rk]
-     *              donde n es el número de tiendas, si y ti son posición y tenges de cada tienda,
-     *              y ri son las posiciones iniciales de los robots.
-     * @throws IllegalArgumentException si el input es null, vacío o tiene formato inválido.
-     */
-    public void create(int[] input) {
-        if (input == null || input.length < 1) {
-            throw new IllegalArgumentException("Input no puede ser null o vacío");
-        }
-        int n = input[0];
-        if (input.length < 1 + 2*n) {
-            throw new IllegalArgumentException("Input insuficiente para el número de tiendas especificado");
-        }
-        
-        for (int i = 0; i < n; i++) {
-            int storePosition = input[1 + 2*i];
-            int storeTenges = input[1 + 2*i + 1];
-            if (storePosition < 0 || storePosition >= lenRoad) {
-                throw new IllegalArgumentException("Posición de tienda fuera del rango válido: " + storePosition);
-            }
-            placeStore(storePosition, storeTenges);
-        }
-        
-        int robotStartIndex = 1 + 2*n;
-        for (int i = robotStartIndex; i < input.length; i++) {
-             int robotPosition = input[i];
-             if (robotPosition < 0 || robotPosition >= lenRoad) {
-                 throw new IllegalArgumentException("Posición de robot fuera del rango válido: " + robotPosition);
-                }
-             placeRobot(robotPosition);
+        for (int[] day : days) {
+            procesarDia(day);
         }
     }
 
+    /**
+    * Procesa un día específico, agregando un robot o una tienda.
+    * 
+    * @param day Array con la acción del día: [1, x] o [2, x, c]
+    */
+    private void procesarDia(int[] day) {
+        if (day == null || day.length < 2) {
+            return;
+        }
+        int actionType = day[0];
+    
+        if (actionType == 1) {
+            //Agregamos un robor
+            if (day.length >= 2) {
+                int robotPosition = day[1];
+                if (robotPosition >= 0 && robotPosition < lenRoad) {
+                    placeRobot(robotPosition);
+                }
+            }
+        } 
+        else if (actionType == 2) {
+            //Agregamos una tienda
+            if (day.length >= 3) {
+                int storePosition = day[1];
+                int tenges = day[2];
+                if (storePosition >= 0 && storePosition < lenRoad) {
+                    placeStore(storePosition, tenges);
+                }
+            }
+        }
+    }
     /**
      * Coloca una tienda en la ruta en una ubicación específica.
      * Si ya existe una tienda en esa ubicación, muestra un mensaje de error.
@@ -302,72 +286,154 @@ public class SilkRoad {
         
         robot.addProfitsInMovements(gananciaNeta);
     }
-
+    
     /**
-     * Mueve todos los robots de forma inteligente para maximizar la ganancia total.
-     * Requisito 11: Los robots deciden automáticamente sus movimientos buscando
-     * la tienda con mayor cantidad de tenges disponibles en toda la ruta.
-     * Cada robot se mueve hacia la tienda que le proporcione la máxima ganancia.
+     * Requisito 11 :Debe permitir a los robots decidir sus movimientos buscando maximizar la ganancia.
      */
     public void moveRobots() {
         if (robots.isEmpty()) {
             showMessage("No hay robots para mover");
             return;
         }
-        
-        if (stores.isEmpty()){
+        if (stores.isEmpty()) {
             return;
         }
-        ArrayList<Robot> robotsCopy = new ArrayList<>(robots);
-        HashSet<Integer> visitedStores = new HashSet<>();
         
-        for (Robot robot : robotsCopy) {
-            int currentLocation = robot.getIndex();
-            int bestMove = 0;
-            int maxNetGain = 0;
+        // Crear lista de tiendas ordenadas por posición
+        List<Integer> storePositions = new ArrayList<>(stores.keySet());
+        Collections.sort(storePositions);
+        
+        // Para cada robot, calcular la mejor ganancia posible
+        int mejorGananciaTotal = 0;
+        Map<Robot, List<Integer>> mejorAsignacion = new HashMap<>();
+        
+        // Probar todas las particiones posibles de tiendas entre robots
+        calcularMejorParticion(new ArrayList<>(robots), storePositions, 0, 
+                              new HashMap<>(), 0, mejorAsignacion);
+        
+        // Ejecutar la mejor asignación encontrada
+        for (Map.Entry<Robot, List<Integer>> entry : mejorAsignacion.entrySet()) {
+            Robot robot = entry.getKey();
+            List<Integer> rutaTiendas = entry.getValue();
             
-            for (int distance = -lenRoad; distance <= lenRoad; distance++) {
-                if (distance == 0) continue;
+            if (rutaTiendas.isEmpty()) continue;
+            
+            int posActual = robot.getIndex();
+            int gananciaRobot = 0;
+            
+            // Visitar cada tienda en orden
+            for (Integer storePosicion : rutaTiendas) {
+                Store tienda = stores.get(storePosicion);
+                if (tienda == null || tienda.getTenge() <= 0) continue;
                 
-                int targetLocation = currentLocation + distance;
-                if (targetLocation >= 0 && targetLocation < lenRoad) {
-                    Store store = stores.get(targetLocation);
-                    if (store != null && store.getTenge() > 0 && !visitedStores.contains(targetLocation)) {
-                        int tengesEnTienda = store.getTenge();
-                        int distancia = Math.abs(distance);
-                    
-                        int netGain = tengesEnTienda - distancia;
-                    
-                        if (netGain > 0 && netGain > maxNetGain) {
-                            maxNetGain = netGain;
-                            bestMove = distance;
-                        }
-                    }
+                int distancia = Math.abs(storePosicion - posActual);
+                int tenges = tienda.getTenge();
+                int gananciaNeta = tenges - distancia;
+                
+                gananciaRobot += gananciaNeta;
+                posActual = storePosicion;
+                
+                // Vaciar tienda
+                tienda.setTenge(0);
+                tienda.incrementTimesEmpty();
+            }
+            
+            // Actualizar robot
+            robot.setIndexLocation(posActual);
+            robot.setLocation(posicion[posActual]);
+            robot.setTenge(robot.getTenge() + gananciaRobot);
+            robot.addProfitsInMovements(gananciaRobot);
+        }
+    }
+
+    /**
+     * Calcula recursivamente la mejor partición de tiendas entre robots.
+     * 
+     * @param robots Lista de robots disponibles
+     * @param tiendas Lista de posiciones de tiendas
+     * @param indiceTienda Índice actual en la lista de tiendas
+     * @param asignacionActual Asignación actual de robots a rutas
+     * @param indiceRobot Robot actual procesando
+     * @param mejorAsignacion Output: mejor asignación encontrada
+     */
+    private void calcularMejorParticion(
+        List<Robot> robots,
+        List<Integer> tiendas,
+        int indiceTienda,
+        Map<Robot, List<Integer>> asignacionActual,
+        int indiceRobot,
+        Map<Robot, List<Integer>> mejorAsignacion
+    ) {
+        // Caso base: procesamos todas las tiendas
+        if (indiceTienda >= tiendas.size()) {
+            int gananciaActual = calcularGananciaTotal(asignacionActual);
+            int gananciaActualMejor = calcularGananciaTotal(mejorAsignacion);
+            
+            if (gananciaActual > gananciaActualMejor) {
+                mejorAsignacion.clear();
+                for (Map.Entry<Robot, List<Integer>> entry : asignacionActual.entrySet()) {
+                    mejorAsignacion.put(entry.getKey(), new ArrayList<>(entry.getValue()));
                 }
             }
-
-            if (bestMove != 0 && maxNetGain > 0) {
-                int newLocation = currentLocation + bestMove;
-                int distanciaRecorrida = Math.abs(bestMove);
-                
-                robot.setIndexLocation(newLocation);
-                robot.setLocation(posicion[newLocation]);
-                
-                Store storeAtNewLocation = stores.get(newLocation);
-                if (storeAtNewLocation != null && storeAtNewLocation.getTenge() > 0) {
-                    int tengesRecogidos = storeAtNewLocation.getTenge();
-                
-                    int gananciaNeta = tengesRecogidos - distanciaRecorrida;
-                
-                    robot.setTenge(robot.getTenge() + gananciaNeta);
-                    storeAtNewLocation.setTenge(0);
-                    storeAtNewLocation.incrementTimesEmpty();
-                    robot.addProfitsInMovements(gananciaNeta);
-                
-                    visitedStores.add(newLocation);
-                }
+            return;
+        }
+        
+        // Probar asignar la tienda actual a cada robot
+        for (int i = 0; i < robots.size(); i++) {
+            Robot robot = robots.get(i);
+            Integer tiendaPos = tiendas.get(indiceTienda);
+            
+            // Agregar tienda a la ruta del robot
+            if (!asignacionActual.containsKey(robot)) {
+                asignacionActual.put(robot, new ArrayList<>());
+            }
+            asignacionActual.get(robot).add(tiendaPos);
+            
+            // Recursión
+            calcularMejorParticion(robots, tiendas, indiceTienda + 1, 
+                                  asignacionActual, i, mejorAsignacion);
+            
+            // Backtrack
+            asignacionActual.get(robot).remove(asignacionActual.get(robot).size() - 1);
+            if (asignacionActual.get(robot).isEmpty()) {
+                asignacionActual.remove(robot);
             }
         }
+        
+        // También probar NO asignar la tienda a ningún robot
+        calcularMejorParticion(robots, tiendas, indiceTienda + 1, 
+                              asignacionActual, indiceRobot, mejorAsignacion);
+    }
+
+    /**
+     * Calcula la ganancia total de una asignación de robots a rutas.
+     * 
+     * @param asignacion Mapa de Robot -> Lista de posiciones de tiendas
+     * @return Ganancia total
+     */
+    private int calcularGananciaTotal(Map<Robot, List<Integer>> asignacion) {
+        int total = 0;
+        
+        for (Map.Entry<Robot, List<Integer>> entry : asignacion.entrySet()) {
+            Robot robot = entry.getKey();
+            List<Integer> ruta = entry.getValue();
+            
+            int posActual = robot.getIndex();
+            
+            for (Integer tiendaPos : ruta) {
+                Store tienda = stores.get(tiendaPos);
+                if (tienda == null) continue;
+                
+                int distancia = Math.abs(tiendaPos - posActual);
+                int tenges = tienda.getTenge();
+                int ganancia = tenges - distancia;
+                
+                total += ganancia;
+                posActual = tiendaPos;
+            }
+        }
+        
+        return total;
     }
     
     /**
