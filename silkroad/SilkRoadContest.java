@@ -9,13 +9,14 @@ import javax.swing.JOptionPane;
  * Clase que resuelve el problema de optimización de la Ruta de la Seda
  * de la maratón
  * 
- *LOGICA DE LA MARATON
+ * LOGICA DE LA MARATON
  * - Cada movimiento cuesta 1 tenge por metro
  * - Ganancia neta = tenges tienda - distancia
  * - Las tiendas y robots se acumulan día a día
  * - Cada tienda solo se vacía una vez por día
  * - Antes de cada día: reabastecimiento y reset de posiciones
  */
+
 public class SilkRoadContest {
     private SilkRoad simulator;
     //////////
@@ -26,43 +27,7 @@ public class SilkRoadContest {
     private ArrayList<Integer> optimalRobotPositions;        
     private ArrayList<Integer> optimalDistances;            
     private int[][] days;                                  
-    private int[][] posiciones;                  
-    
-    /**
-     * Constructor de SilkRoadContest.
-     * 
-     * Inicializa el contestador con la configuración de los días.
-     * Cada día representa una acción: agregar robot o tienda.
-     * 
-     * @param days Matriz int[][] donde cada fila representa un día:
-     *Fila i: [1, x]agregar robot en posición x
-     *Fila i: [2, x, c]agregar tienda en posición x con c tenges
-     * 
-     * @throws IllegalArgumentException si days es null o vacío
-     */
-    //public SilkRoadContest(int[][] days) {
-    //    if (days == null || days.length == 0) {
-    //        throw new IllegalArgumentException("El array de días no puede ser null o vacío");
-    //    }
-    //    
-    //    this.days = days;
-    //    this.currentDay = 0;
-    //    this.maxDailyUtility = 0;
-    //    this.optimalRobotPositions = new ArrayList<>();
-    //    this.optimalDistances = new ArrayList<>();
-    //    this.allStores = new HashMap<>();         
-    //    this.allRobots = new ArrayList<>();   
-    //    int maxPos = 0;
-    //    for (int[] day : days) {
-    //        if (day.length >= 2 && day[1] > maxPos) {
-    //            maxPos = day[1];
-    //        }
-    //    }
-
-    //    if (maxPos > 0) {
-    //        this.posiciones = Posicion.generateSpiral(maxPos + 1);
-    //    }
-    //}
+    private int[][] posiciones;   
     
     /**
      * Constructor alternativo para un solo día.
@@ -83,36 +48,7 @@ public class SilkRoadContest {
         this.allStores = new HashMap<>();
         this.allRobots = new ArrayList<>();
     }
-    //METODO RESOLVE CICLO3
-    /**
-     * Requisito 14: Resuelve el problema de la maratón para todos los días.
-     * Método principal que retorna la máxima ganancia para cada día.
-     * Para cada día:
-     * 1. Se agrega el nuevo robot o tienda (acumulativo)
-     * 2. Se calcula la máxima ganancia considerando costos de movimiento
-     * 3. Se retorna la ganancia máxima
-     * @param days Matriz int[][] donde cada fila es una acción del día:
-     *[1, x] agregar robot en posición x
-     *[2, x, c] agregar tienda en posición x con c tenges
-     * @return Array int[] donde result[i] = máxima utilidad acumulada del día i
-     */
-    public int[] solve(int[][] days) {
-        if (days == null || days.length == 0) {
-            return new int[0];
-        }
-        this.days = days;
-        this.allStores.clear();
-        this.allRobots.clear();
-        this.optimalRobotPositions.clear();
-        this.optimalDistances.clear();
-        int[] results = new int[days.length];
-        for (int i = 0; i < days.length; i++) {
-            results[i] = solveDay(i);
-        }
-        
-        return results;
-    }
-    
+
     /**
      * Constructor que recibe los días en formato de matriz
      * @param days Cada fila: [tipo, posición, (tenges si tipo=2)]
@@ -122,6 +58,13 @@ public class SilkRoadContest {
             throw new IllegalArgumentException("No hay datos de días para simular.");
         }
         
+        // Guardar los días
+        this.days = days;
+        
+        // Inicializar estructuras de datos
+        this.currentDay = 0;
+        this.maxDailyUtility = 0;
+        
         // Calcular longitud máxima
         int maxPosition = 0;
         for (int[] day : days) {
@@ -130,7 +73,99 @@ public class SilkRoadContest {
             }
         }
         
+        // Crear el simulador
         this.simulator = new SilkRoad(maxPosition + 1);
+    }
+
+    //METODO RESOLVE CICLO3
+    /**
+     * Requisito 14: Resuelve el problema de la maratón para todos los días.
+     * 
+     * Usa el método moveRobots() de SilkRoad para calcular la ganancia óptima.
+     * 
+     * @param days Matriz int[][] donde cada fila es una acción del día:
+     *             [1, x] → agregar robot en posición x
+     *             [2, x, c] → agregar tienda en posición x con c tenges
+     * 
+     * @return Array int[] donde result[i] = máxima ganancia acumulada del día i
+     */
+    public int[] solve(int[][] days) {
+        if (days == null || days.length == 0) {
+            return new int[0];
+        }
+        ArrayList<Integer> robots = new ArrayList<>();
+        HashMap<Integer, Integer> stores = new HashMap<>();
+        int[] resultados = new int[days.length];
+        for (int i = 0; i < days.length; i++) {
+            int[] dia = days[i];
+            if (dia.length < 2) {
+                continue;
+            }
+            int tipo = dia[0];
+            int posicion = dia[1];
+            if (tipo == 1) {
+                robots.add(posicion);
+            } else if (tipo == 2 && dia.length >= 3) {
+                int tenges = dia[2];
+                stores.put(posicion, tenges);
+            }
+            resultados[i] = calcularGananciaConSimulador(robots, stores);
+        }
+        mostrarResumen(resultados);
+        return resultados;
+    }
+
+    /**
+     * Calcula la máxima ganancia usando un simulador temporal de SilkRoad.
+     * 
+     * @param robots ArrayList con posiciones de todos los robots
+     * @param stores HashMap con posiciones y dinero de todas las tiendas
+     * @return Ganancia máxima posible
+     */
+    private int calcularGananciaConSimulador(ArrayList<Integer> robots,                                         HashMap<Integer, Integer> stores) {
+        if (robots.isEmpty() || stores.isEmpty()) {
+            return 0;
+        }
+        int maxPos = 0;
+        for (Integer robotPos : robots) {
+            maxPos = Math.max(maxPos, robotPos);
+        }
+        for (Integer storePos : stores.keySet()) {
+            maxPos = Math.max(maxPos, storePos);
+        }
+        SilkRoad simulador = new SilkRoad(maxPos + 1);
+        for (Integer robotPos : robots) {
+            simulador.placeRobot(robotPos);
+        }
+        for (Integer storePos : stores.keySet()) {
+            simulador.placeStore(storePos, stores.get(storePos));
+        }
+        simulador.moveRobots();
+        simulador.makeInvisible();
+        int ganancia = simulador.profit();
+        return ganancia;
+    }
+
+    /**
+     * Muestra el resumen final de ganancias
+     */
+    private void mostrarResumen(int[] ganancias) {
+        StringBuilder resumen = new StringBuilder();
+        
+        for (int i = 0; i < ganancias.length; i++) {
+            String linea = String.format("Día %2d: %5d tenges \n", 
+                                        (i + 1), ganancias[i]);
+            resumen.append(linea);
+        }
+        
+        System.out.println("\n" + resumen.toString());
+        
+        JOptionPane.showMessageDialog(
+            null,
+            resumen.toString(),
+            "Resultados - Silk Road Contest",
+            JOptionPane.INFORMATION_MESSAGE
+        );
     }
     
     /**
@@ -239,28 +274,6 @@ public class SilkRoadContest {
     }
     
     /**
-     * Muestra el resumen final de ganancias
-     */
-    private void mostrarResumen(int[] ganancias) {
-        StringBuilder resumen = new StringBuilder();
-        
-        for (int i = 0; i < ganancias.length; i++) {
-            String linea = String.format("Día %2d: %5d tenges \n", 
-                                        (i + 1), ganancias[i]);
-            resumen.append(linea);
-        }
-        
-        System.out.println("\n" + resumen.toString());
-        
-        JOptionPane.showMessageDialog(
-            null,
-            resumen.toString(),
-            "Resultados - Silk Road Contest",
-            JOptionPane.INFORMATION_MESSAGE
-        );
-    }
-    
-    /**
      * Método auxiliar para pausar la simulación.
      */
     private void esperar(int ms) {
@@ -269,83 +282,5 @@ public class SilkRoadContest {
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         }
-    }
-    
-    /**
-     * Resuelve el problema para todos los días de forma acumulativa (sin parámetros).
-     * Utiliza los días ya configurados en el constructor.
-     * @return Array int[] donde result[i] = máxima utilidad del día i
-     */
-    public int[] solveAll() {
-        return solve(this.days);
-    }
-    
-    /**
-     * Resuelve un día específico de forma acumulativa.
-     * @param dayIndex Índice del día (0-based)
-     * @return Máxima utilidad para ese día
-     */
-    public int solveDay(int dayIndex) {
-        if (dayIndex < 0 || dayIndex >= days.length) {
-            return 0;
-        }
-        this.currentDay = dayIndex;
-        int[] dayAction = days[dayIndex];
-        if (dayAction.length < 2) {
-            throw new IllegalArgumentException("Acción del día inválida");
-        }
-        int actionType = dayAction[0];
-        if (actionType == 1) {
-            int robotPos = dayAction[1];
-            if (!allRobots.contains(robotPos)) {
-                allRobots.add(robotPos);
-            }
-        } else if (actionType == 2) {
-            if (dayAction.length < 3) {
-                throw new IllegalArgumentException("Tienda debe tener posición y cantidad de tenges");
-            }
-            int storePos = dayAction[1];
-            int tenges = dayAction[2];
-            allStores.put(storePos, tenges);
-        }
-        optimalRobotPositions.clear();
-        optimalDistances.clear();
-        this.maxDailyUtility = moveRobots();
-        
-        return maxDailyUtility;
-    }
-    
-    /**
-     * Mueve todos los robots de forma inteligente para maximizar la ganancia total.
-     * Requisito 11: Los robots deciden automáticamente sus movimientos buscando
-     * @return Ganancia total máxima obtenida por todos los robots
-     */
-    private int moveRobots() {
-        if (allRobots.isEmpty() || allStores.isEmpty()) {
-            return 0;
-        }
-        int totalProfit = 0;
-        HashMap<Integer, Integer> availableStores = new HashMap<>(allStores);
-        for (Integer robotPos : allRobots) {
-            int bestStore = -1;
-            int maxTenges = 0;
-            for (Integer storePos : availableStores.keySet()) {
-                int storeMoney = availableStores.get(storePos);
-                if (storeMoney > maxTenges) {
-                    maxTenges = storeMoney;
-                    bestStore = storePos;
-                }
-            }
-            if (bestStore != -1 && maxTenges > 0) {
-                int distance = Math.abs(bestStore - robotPos);
-                int netGain = maxTenges - distance;
-                optimalRobotPositions.add(robotPos);
-                optimalDistances.add(bestStore - robotPos);
-                totalProfit += netGain;
-                availableStores.put(bestStore, 0);
-            }
-        }
-        
-        return totalProfit;
     }
 }
