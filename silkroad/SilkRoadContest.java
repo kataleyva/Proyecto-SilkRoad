@@ -197,8 +197,6 @@ public class SilkRoadContest {
             int ganancia = simulator.profit();
             ganancias[i] = ganancia;
             
-            System.out.println("GANANCIA DEL DÍA: " + ganancia + " tenges");
-            
             if (slow) simulator.esperar(2000);
         }
         

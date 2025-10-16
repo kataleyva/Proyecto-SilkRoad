@@ -8,35 +8,58 @@ import java.util.Arrays;
  * Genera colores al azar que tienen los robots y las tiendas.
  */
 public class Colour {
-    private List<String> colors;
-    private static List<String> colorDefault;
+    private static List<String> availableColors;
+    private static final List<String> colorDefault = Arrays.asList("black", "blue", "green", "magenta", "red", "yellow");
     private final Random random = new Random();
 
     public Colour() {
-        colorDefault = new ArrayList<>();
-        colors = new ArrayList<>();
-        putColors();
-    }
-
-    private void putColors() {
-        colorDefault.add("black");
-        colorDefault.add("blue");
-        colorDefault.add("green");
-        colorDefault.add("magenta");
-        colorDefault.add("red");
-        colorDefault.add("yellow");
-    }
-
-    public String chooseColor() {
-        String colour = colorDefault.get(random.nextInt(colorDefault.size()));
-    
-        if (!colors.isEmpty()) {
-            while (colour.equals(colors.get(colors.size() - 1))) {
-                colour = colorDefault.get(random.nextInt(colorDefault.size()));
-            }   
+        if (availableColors == null) {
+            availableColors = new ArrayList<>(colorDefault);
         }
+    }
+
+    public void returnColor(String color) {
+        if (!availableColors.contains(color)) {
+            availableColors.add(color);
+        }
+    }
     
-        colors.add(colour);
-       return colour.toLowerCase();
-    }          
+    public String chooseColor() {
+        if (availableColors.isEmpty()) {
+            availableColors = new ArrayList<>(colorDefault);
+        }
+
+        int index = random.nextInt(availableColors.size());
+        String chosen = availableColors.remove(index);
+
+        return chosen;
+    }
+    
+    public String chooseColorExcluding(String excludedColor) {
+        if (availableColors.isEmpty()) {
+            availableColors = new ArrayList<>(colorDefault);
+        }
+        
+        List<String> validColors = new ArrayList<>();
+        for (String c : availableColors) {
+            if (!c.equals(excludedColor)) {
+                validColors.add(c);
+            }
+        }
+        
+        if (validColors.isEmpty()) {
+            availableColors = new ArrayList<>(colorDefault);
+            for (String c : availableColors) {
+                if (!c.equals(excludedColor)) {
+                    validColors.add(c);
+                }
+            }
+        }
+        
+        int index = random.nextInt(validColors.size());
+        String chosen = validColors.get(index);
+        availableColors.remove(chosen);
+        return chosen;
+    }
 }
+

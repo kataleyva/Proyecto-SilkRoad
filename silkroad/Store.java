@@ -15,7 +15,6 @@ public class Store {
        this.index = index;
        this.tengeInitial = tenges;
        this.tenge = tenges;
-       this.base.changeColor("blue");
        this.base.makeVisible();
     }
     
@@ -73,8 +72,6 @@ public class Store {
         if (base != null) {
             if (tenge <= 0) {
                 base.changeColor("gray");
-            } else {
-                base.changeColor("blue");
             }
         }
     }

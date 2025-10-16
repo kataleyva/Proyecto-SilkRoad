@@ -30,20 +30,20 @@ public class Rectangle{
         xPosition = 70;
         yPosition = 15;
         this.colour = new Colour();
-        this.color = colour.chooseColor();
+        this.color = colour.chooseColorExcluding("black");
         isVisible = false;
     }
 
-        public Rectangle(int xPosition, int yPosition){
+    public Rectangle(int xPosition, int yPosition){
         height = 30;
         width = 30;
         this.xPosition = xPosition + 300;
         this.yPosition = yPosition + 300;
         this.colour = new Colour();
-        this.color = colour.chooseColor();
+        this.color = colour.chooseColorExcluding("black");
         isVisible = true;
     }    
-
+    
     /**
      * Make this rectangle visible. If it was already visible, do nothing.
      */
