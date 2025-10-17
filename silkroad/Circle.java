@@ -35,8 +35,21 @@ public class Circle{
         this.yPosition = yPosition + 300;
         this.colour = new Colour();
         this.color = colour.chooseColor();
-        isVisible = true;
+        isVisible = false;
     }    
+    
+    public Circle(int xPosition, int yPosition, String color){
+        this.diameter = 25;
+        this.xPosition = xPosition + 300;
+        this.yPosition = yPosition + 300;
+        this.colour = new Colour();
+        this.color = color;
+        isVisible = false;
+    }    
+    
+    public String getColor(){
+        return this.color;
+    }
     
     public void makeVisible(){
         isVisible = true;
@@ -191,6 +204,7 @@ public class Circle{
         this.color = colour.chooseColor();
     }
 
-
-
+    public boolean isVisible() {
+        return this.isVisible;
+    }
 }

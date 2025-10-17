@@ -14,8 +14,7 @@ public class Robot {
         this.location = new int[]{location[0], location[1]};
         this.tenge = 0;
         this.index = index;
-        this.initialIndex = index; 
-        this.robot.makeVisible();
+        this.initialIndex = index;
         this.initialLocation = new int[]{location[0], location[1]};
         this.profitsInMovements = new ArrayList<>();
     }
@@ -40,17 +39,25 @@ public class Robot {
         return this.profitsInMovements;
     }
     
+    public String getColor(){
+        return this.robot.getColor();
+    }
+    
     public void addProfitsInMovements(int profit) {
         this.profitsInMovements.add(profit);
     }
     
     public void resetRobotLocation(){
         this.location = new int[]{initialLocation[0], initialLocation[1]};
-        this.index = this.initialIndex; 
+        this.index = initialIndex; 
         if (this.robot != null) {
+            boolean wasVisible = this.robot.isVisible(); // Guardar estado
             this.robot.makeInvisible();
-            this.robot = new Circle(location[0], location[1]);
-            this.robot.makeVisible();
+            String color = this.robot.getColor();
+            this.robot = new Circle(this.location[0], this.location[1], color);
+            if (wasVisible) {  // Solo hacer visible si estaba visible antes
+                this.robot.makeVisible();
+            }
         }
     }
     
@@ -74,13 +81,17 @@ public class Robot {
     }
     
     public void setLocation(int[] location) {
-        this.location = new int[]{location[0], location[1]};
-        if (this.robot != null) {
-            this.robot.makeInvisible();
-            this.robot = new Circle(location[0], location[1]);
+    this.location = new int[]{location[0], location[1]};
+    if (this.robot != null) {
+        boolean wasVisible = this.robot.isVisible(); // Guardar estado
+        this.robot.makeInvisible();
+        String color = this.robot.getColor();
+        this.robot = new Circle(location[0], location[1], color);
+        if (wasVisible) {  // Solo hacer visible si estaba visible antes
             this.robot.makeVisible();
         }
     }
+}
     
     public void makeVisible() {
         if (robot != null) {

@@ -8,6 +8,7 @@ public class Store {
     private int tengeInitial;
     private int tenge;
     private int timesEmpty = 0;
+    private String initialColor;
     
     public Store(int[] location, int tenges, int index) {
        this.base = new Rectangle(location[0], location[1]);
@@ -15,7 +16,7 @@ public class Store {
        this.index = index;
        this.tengeInitial = tenges;
        this.tenge = tenges;
-       this.base.makeVisible();
+       this.initialColor = this.base.getColor();
     }
     
     public int[] getLocation() {
@@ -72,6 +73,8 @@ public class Store {
         if (base != null) {
             if (tenge <= 0) {
                 base.changeColor("gray");
+            } else {
+                base.changeColor(initialColor);
             }
         }
     }

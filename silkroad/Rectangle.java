@@ -41,7 +41,21 @@ public class Rectangle{
         this.yPosition = yPosition + 300;
         this.colour = new Colour();
         this.color = colour.chooseColorExcluding("black");
-        isVisible = true;
+        isVisible = false;
+    }    
+    
+    public Rectangle(int xPosition, int yPosition, String color){
+        height = 30;
+        width = 30;
+        this.xPosition = xPosition + 300;
+        this.yPosition = yPosition + 300;
+        this.colour = new Colour();
+        this.color = color;
+        isVisible = false;
+    }    
+    
+    public String getColor(){
+        return this.color;
     }    
     
     /**

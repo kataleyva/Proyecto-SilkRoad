@@ -141,6 +141,7 @@ public class SilkRoad {
             }
         }
     }
+    
     /**
      * Coloca una tienda en la ruta en una ubicación específica.
      * Si ya existe una tienda en esa ubicación, muestra un mensaje de error.
@@ -151,7 +152,9 @@ public class SilkRoad {
     public void placeStore(int location, int tenges){
         if (stores.get(location) != null){
             showMessage("No se puede insertar una tienda sobre una ya existente.");
-        } else {
+        }else if(getFirstRobotAtLocation(location) != null){
+            showMessage("No se puede insertar una tienda sobre un robot ya existente.");
+        }else{
             Store store = new Store(this.posicion[location], tenges, location);
             stores.put(location, store);
             if (isVisible) {
@@ -185,6 +188,8 @@ public class SilkRoad {
     public void placeRobot(int location) {
         if (getFirstRobotAtLocation(location) != null){
             showMessage("No se puede insertar un robot sobre uno ya existente.");
+        }else if(getFirstStoreAtLocation(location) != null){
+            showMessage("No se puede insertar un robot sobre una tienda ya existente.");
         } else {
             Robot robot = new Robot(posicion[location], location);
             robots.add(robot);
@@ -266,7 +271,6 @@ public class SilkRoad {
             return;
         }
          
-         
         int distance = Math.abs(meters);
     
         robot.setIndexLocation(newLocation);
@@ -295,6 +299,7 @@ public class SilkRoad {
             showMessage("No hay robots para mover");
             return;
         }
+        
         if (stores.isEmpty()) {
             return;
         }
@@ -757,10 +762,8 @@ public class SilkRoad {
      * @param message Mensaje a mostrar al usuario.
      */
     private void showMessage(String message) {
-        if (isVisible) {
-            JOptionPane.showMessageDialog(null, message, "Silk Road Simulator", 
+        JOptionPane.showMessageDialog(null, message, "Silk Road Simulator", 
                                         JOptionPane.INFORMATION_MESSAGE);
-        }
     }
     //Pruebas de aceptacion
     /**
