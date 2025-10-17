@@ -49,37 +49,6 @@ public class SilkRoadContest {
     }
     
     /**
-     * Calcula la máxima ganancia usando un simulador temporal de SilkRoad.
-     * 
-     * @param robots ArrayList con posiciones de todos los robots
-     * @param stores HashMap con posiciones y dinero de todas las tiendas
-     * @return Ganancia máxima posible
-     */
-    private int calcularGananciaConSimulador(ArrayList<Integer> robots,                                         HashMap<Integer, Integer> stores) {
-        if (robots.isEmpty() || stores.isEmpty()) {
-            return 0;
-        }
-        int maxPos = 0;
-        for (Integer robotPos : robots) {
-            maxPos = Math.max(maxPos, robotPos);
-        }
-        for (Integer storePos : stores.keySet()) {
-            maxPos = Math.max(maxPos, storePos);
-        }
-        SilkRoad simulador = new SilkRoad(maxPos + 1);
-        for (Integer robotPos : robots) {
-            simulador.placeRobot(robotPos);
-        }
-        for (Integer storePos : stores.keySet()) {
-            simulador.placeStore(storePos, stores.get(storePos));
-        }
-        simulador.moveRobots();
-        int ganancia = simulador.profit();
-        return ganancia;
-    }
-
-    
-    /**
      * Constructor que recibe los días en formato de matriz
      * @param days Cada fila: [tipo, posición, (tenges si tipo=2)]
      */
@@ -171,7 +140,6 @@ public class SilkRoadContest {
             simulador.placeStore(storePos, stores.get(storePos));
         }
         simulador.moveRobots();
-        simulador.makeInvisible();
         int ganancia = simulador.profit();
         return ganancia;
     }
