@@ -3,15 +3,20 @@ dependency1.from=Line
 dependency1.to=Canvas
 dependency1.type=UsesDependency
 <<<<<<< HEAD
+<<<<<<< HEAD
 dependency10.from=SilkRoadContest
+=======
+dependency10.from=SilkRoadContest2
+>>>>>>> ramaKata
 dependency10.to=Robot
 dependency10.type=UsesDependency
-dependency11.from=SilkRoad
-dependency11.to=Store
+dependency11.from=Main
+dependency11.to=SilkRoadContest
 dependency11.type=UsesDependency
-dependency12.from=SilkRoad
-dependency12.to=Robot
+dependency12.from=SilkRoadContest
+dependency12.to=SilkRoad
 dependency12.type=UsesDependency
+<<<<<<< HEAD
 dependency13.from=SilkRoad
 dependency13.to=Line
 =======
@@ -27,13 +32,18 @@ dependency12.type=UsesDependency
 dependency13.from=SilkRoad
 dependency13.to=Posicion
 >>>>>>> Mich
+=======
+dependency13.from=SilkRoadContest
+dependency13.to=Robot
+>>>>>>> ramaKata
 dependency13.type=UsesDependency
 dependency14.from=SilkRoad
-dependency14.to=Posicion
+dependency14.to=Store
 dependency14.type=UsesDependency
-dependency15.from=Store
-dependency15.to=Rectangle
+dependency15.from=SilkRoad
+dependency15.to=Robot
 dependency15.type=UsesDependency
+<<<<<<< HEAD
 <<<<<<< HEAD
 dependency16.from=Rectangle
 dependency16.to=Colour
@@ -47,17 +57,30 @@ dependency16.type=UsesDependency
 dependency17.from=Robot
 dependency17.to=Circle
 >>>>>>> Mich
+=======
+dependency16.from=SilkRoad
+dependency16.to=Line
+dependency16.type=UsesDependency
+dependency17.from=SilkRoad
+dependency17.to=Posicion
+>>>>>>> ramaKata
 dependency17.type=UsesDependency
 dependency2.from=Circle
 dependency2.to=Colour
 dependency2.type=UsesDependency
 <<<<<<< HEAD
+<<<<<<< HEAD
 dependency3.from=Robot
 dependency3.to=Circle
+=======
+dependency3.from=Circle
+dependency3.to=Canvas
+>>>>>>> ramaKata
 dependency3.type=UsesDependency
-dependency4.from=Line
-dependency4.to=Canvas
+dependency4.from=Rectangle
+dependency4.to=Colour
 dependency4.type=UsesDependency
+<<<<<<< HEAD
 dependency5.from=Main
 dependency5.to=SilkRoadContest
 =======
@@ -70,25 +93,35 @@ dependency4.type=UsesDependency
 dependency5.from=Rectangle
 dependency5.to=Canvas
 >>>>>>> Mich
+=======
+dependency5.from=Rectangle
+dependency5.to=Canvas
+>>>>>>> ramaKata
 dependency5.type=UsesDependency
-dependency6.from=SilkRoadC2Test
-dependency6.to=SilkRoad
+dependency6.from=Store
+dependency6.to=Rectangle
 dependency6.type=UsesDependency
+<<<<<<< HEAD
 <<<<<<< HEAD
 dependency7.from=SilkRoadContest2
 dependency7.to=SilkRoad
+=======
+dependency7.from=Robot
+dependency7.to=Circle
+>>>>>>> ramaKata
 dependency7.type=UsesDependency
-dependency8.from=SilkRoadContest2
-dependency8.to=Robot
+dependency8.from=SilkRoadC2Test
+dependency8.to=SilkRoad
 dependency8.type=UsesDependency
-dependency9.from=SilkRoadContest
+dependency9.from=SilkRoadContest2
 dependency9.to=SilkRoad
 dependency9.type=UsesDependency
 editor.fx.0.height=727
 editor.fx.0.width=697
-editor.fx.0.x=-7
-editor.fx.0.y=0
+editor.fx.0.x=100
+editor.fx.0.y=100
 objectbench.height=132
+<<<<<<< HEAD
 objectbench.width=806
 package.divider.horizontal=0.6040118870728083
 package.divider.vertical=0.7814465408805031
@@ -115,6 +148,13 @@ package.divider.vertical=0.8333333333333334
 package.editor.height=510
 package.editor.width=1226
 >>>>>>> Mich
+=======
+objectbench.width=802
+package.divider.horizontal=0.6010401188707281
+package.divider.vertical=0.7814465408805031
+package.editor.height=477
+package.editor.width=1213
+>>>>>>> ramaKata
 package.editor.x=0
 package.editor.y=0
 package.frame.height=736
@@ -133,6 +173,7 @@ target1.height=70
 target1.name=SilkRoadContestTest
 target1.showInterface=false
 <<<<<<< HEAD
+<<<<<<< HEAD
 target1.type=ClassTarget
 target1.width=120
 target1.x=280
@@ -144,24 +185,35 @@ target1.x=720
 target1.y=110
 target10.association=SilkRoadContestTest
 >>>>>>> Mich
+=======
+target1.type=UnitTestTargetJunit5
+target1.width=150
+target1.x=170
+target1.y=340
+>>>>>>> ramaKata
 target10.height=70
 target10.name=SilkRoadContest
 target10.showInterface=false
 target10.type=ClassTarget
 target10.width=130
 target10.x=690
+<<<<<<< HEAD
 target10.y=140
+=======
+target10.y=130
+>>>>>>> ramaKata
 target11.height=70
 target11.name=SilkRoad
 target11.showInterface=false
 target11.type=ClassTarget
-target11.width=130
-target11.x=960
-target11.y=340
+target11.width=120
+target11.x=460
+target11.y=390
 target12.height=70
 target12.name=SilkRoadContest2
 target12.showInterface=false
 target12.type=ClassTarget
+<<<<<<< HEAD
 <<<<<<< HEAD
 target12.width=120
 =======
@@ -169,20 +221,29 @@ target12.width=130
 >>>>>>> Mich
 target12.x=840
 target12.y=70
+=======
+target12.width=130
+target12.x=910
+target12.y=260
+>>>>>>> ramaKata
 target13.height=70
 target13.name=Main
 target13.showInterface=false
 target13.type=ClassTarget
 target13.width=120
-target13.x=370
-target13.y=200
+target13.x=840
+target13.y=70
 target14.height=70
 target14.name=Robot
 target14.showInterface=false
 target14.type=ClassTarget
 target14.width=120
 target14.x=370
+<<<<<<< HEAD
 target14.y=210
+=======
+target14.y=200
+>>>>>>> ramaKata
 target15.height=70
 target15.name=Posicion
 target15.showInterface=false
@@ -195,22 +256,27 @@ target2.name=Circle
 target2.showInterface=false
 target2.type=ClassTarget
 target2.width=120
-target2.x=190
-target2.y=30
+target2.x=280
+target2.y=120
 target3.height=70
 target3.name=Canvas
 target3.showInterface=false
 target3.type=ClassTarget
 target3.width=120
-target3.x=90
-target3.y=120
+target3.x=190
+target3.y=30
 target4.height=70
 target4.name=Rectangle
 target4.showInterface=false
 target4.type=ClassTarget
 target4.width=120
+<<<<<<< HEAD
 target4.x=100
 target4.y=100
+=======
+target4.x=90
+target4.y=120
+>>>>>>> ramaKata
 target5.height=70
 target5.name=SilkRoadC2Test
 target5.showInterface=false
@@ -236,12 +302,12 @@ target8.name=Colour
 target8.showInterface=false
 target8.type=ClassTarget
 target8.width=120
-target8.x=550
-target8.y=130
+target8.x=180
+target8.y=210
 target9.height=70
 target9.name=Line
 target9.showInterface=false
 target9.type=ClassTarget
-target9.width=130
-target9.x=690
+target9.width=120
+target9.x=550
 target9.y=130
