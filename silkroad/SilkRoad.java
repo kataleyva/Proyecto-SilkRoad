@@ -526,7 +526,7 @@ public class SilkRoad {
         Robot rb = robs.get(indices.get(0));
         for (int j = 0; j < 2; j++) {
             rb.makeInvisible();
-            esperar(1500);
+            wait(1500);
             rb.makeVisible();
         }
     }
@@ -784,25 +784,25 @@ public class SilkRoad {
         simulador.placeRobot(3);
         System.out.println("Robots colocados en posiciones 0 y 3.");
     
-        esperar(1500);
+        wait(1500);
         System.out.println("Moviendo robots manualmente...");
         simulador.moveRobot(0, 2); 
-        esperar(1500);
+        wait(1500);
         simulador.moveRobot(3, 2); 
-        esperar(1500);
+        wait(1500);
         System.out.println("Ganancia total hasta ahora: " + simulador.profit());
         simulador.resupplyStores();
         System.out.println("Tiendas reabastecidas.");
-        esperar(1500);
+        wait(1500);
     
         System.out.println("Moviendo robots automáticamente (buscando la tienda más rentable)...");
         simulador.moveRobots();
-        esperar(2000);
+        wait(2000);
         System.out.println("Ganancia total tras movimiento automático: " + simulador.profit());
     
         System.out.println("Reiniciando simulación...");
         simulador.reboot();
-        esperar(2000);
+        wait(2000);
     
         simulador.makeInvisible();
         System.out.println("FIN DE PRUEBA DE ACEPTACIÓN");
@@ -817,7 +817,7 @@ public class SilkRoad {
         makeVisible();
         System.out.println(" Ruta creada con longitud " + lenRoad);
         System.out.println(" Visualización activada");
-        esperar(1000);
+        wait(1000);
         
         // Configuración inicial
         placeStore(2, 100);
@@ -829,33 +829,33 @@ public class SilkRoad {
         System.out.println("  - Posición 5: 75 tenges");
         System.out.println("  - Posición 8: 50 tenges");
         System.out.println("  - Posición 12: 120 tenges");
-        esperar(1500);
+        wait(1500);
         
         placeRobot(0);
         placeRobot(4);
         placeRobot(10);
         System.out.println("\nobots colocados en posiciones 0, 4 y 10");
-        esperar(2000);
+        wait(2000);
         
         //Movimientos manuales
         System.out.println("Los robots se moverán manualmente a las tiendas...");
-        esperar(1000);
+        wait(1000);
         
         moveRobot(0, 2);
         System.out.println("Robot movido de posición 0 a 2 (recolecta 100 tenges)");
-        esperar(1500);
+        wait(1500);
         
         moveRobot(4, 1);
         System.out.println("Robot movido de posición 4 a 5 (recolecta 75 tenges)");
-        esperar(1500);
+        wait(1500);
         
         moveRobot(10, 2);
         System.out.println("Robot movido de posición 10 a 12 (recolecta 120 tenges)");
-        esperar(1500);
+        wait(1500);
         
         int gananciaFase1 = profit();
         System.out.println("\nGanancia después de movimientos manuales: " + gananciaFase1 + " tenges");
-        esperar(2000);
+        wait(2000);
         
         //Historial de tiendas vaciadas
         int[][] historial = emptiedStores();
@@ -864,12 +864,12 @@ public class SilkRoad {
             System.out.println("  → Tienda posición " + historial[i][0] + 
                              ": vaciada " + historial[i][1] + " vez(es)");
         }
-        esperar(2000);
+        wait(2000);
         
         // Reabastecimiento de tiendas vacías
         System.out.println("Reabasteciendo tiendas vacías...");
         resupplyStores();
-        esperar(1500);
+        wait(1500);
         
         int[][] tiendasReabastecidas = stores();
         System.out.println("✓ Tiendas reabastecidas:");
@@ -877,23 +877,23 @@ public class SilkRoad {
             System.out.println("  → Posición " + tiendasReabastecidas[i][0] + 
                              ": " + tiendasReabastecidas[i][1] + " tenges");
         }
-        esperar(2000);
+        wait(2000);
         
         // Movimiento automático
         System.out.println("Los robots buscarán automáticamente la tienda más rentable...");
         int profitAntes = profit();
         System.out.println("Ganancia antes del movimiento: " + profitAntes + " tenges");
-        esperar(1500);
+        wait(1500);
         
         moveRobots();
-        esperar(2000);
+        wait(2000);
         
         int profitDespues = profit();
         int gananciaObtenida = profitDespues - profitAntes;
         System.out.println("Robots movidos automáticamente");
         System.out.println("Ganancia obtenida en esta fase: " + gananciaObtenida + " tenges");
         System.out.println("Ganancia total acumulada: " + profitDespues + " tenges");
-        esperar(2000);
+        wait(2000);
         
         // Estado actual de robots
         int[][] robotsInfo = robots();
@@ -901,7 +901,7 @@ public class SilkRoad {
             System.out.println("  → Robot en posición " + robotsInfo[i][0] + 
                              " con " + robotsInfo[i][1] + " tenges acumulados");
         }
-        esperar(2000);
+        wait(2000);
         
         //Ganancias por movimiento
         int[][] profitsPorMov = profitPerMove();
@@ -917,16 +917,16 @@ public class SilkRoad {
             }
             System.out.println("]");
         }
-        esperar(2000);
+        wait(2000);
         
         // Reinicio
         System.out.println("Reiniciando simulación completa...");
         reboot();
-        esperar(1500);
+        wait(1500);
         
         int gananciaFinal = profit();
         System.out.println("Sistema reiniciado correctamente:");
-        esperar(2000);
+        wait(2000);
         
         makeInvisible();
     }
@@ -939,9 +939,9 @@ public class SilkRoad {
      * Método auxiliar que pausa la ejecución por unos milisegundos
      * para que el usuario pueda observar los cambios visuales.
      */
-    public void esperar(int milisegundos) {
+    private void wait(int ms) {
         try {
-            Thread.sleep(milisegundos);
+            Thread.sleep(ms);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         }
