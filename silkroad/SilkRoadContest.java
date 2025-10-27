@@ -136,6 +136,7 @@ public class SilkRoadContest {
      * @param slow Si true, hace pausas para visualización
      */
     public static void simulate(int[][] days, boolean slow) {
+        simulator = new SilkRoad(days);
         if (days == null || days.length == 0) {
             showMessage("No hay datos para simular");
             return;
@@ -151,6 +152,7 @@ public class SilkRoadContest {
                 resetRobotProfits();
                 showMessage("Juego y Ganancias reiniciadas.");
             }
+            
             if (slow) simulator.pause(800);
             // PASO 2: Agregar nuevo elemento del día
             int[] day = days[i];
@@ -158,18 +160,16 @@ public class SilkRoadContest {
             int posicion = day[1];
             if (tipo == 1) {
                 simulator.placeRobot(posicion);
-               showMessage("ROBOT en posición " + posicion);
             } else if (tipo == 2) {
                 int tenges = day[2];
                 simulator.placeStore(posicion, tenges);
-                showMessage("TIENDA en pos " + posicion + " con " + tenges + " tenges");
             }
             if (slow) simulator.pause(1000);
             // PASO 3: Mostrar estado
             showCurrentStatus();
             if (slow) simulator.pause(1000);
             // PASO 4: Mover robots
-            showMessage("Moviendo robots...");
+            showMessage("Moviendo robots");
             simulator.moveRobots();
             if (slow) simulator.pause(1500);
             // PASO 5: Calcular ganancia
@@ -199,17 +199,25 @@ public class SilkRoadContest {
     private static void showCurrentStatus() {
         int[][] tiendas = simulator.stores();
         int[][] robots = simulator.robots();
-        
-        showMessage("Tiendas (" + tiendas.length + "):");
+    
+        StringBuilder tabla = new StringBuilder();
+        tabla.append(String.format("%-8s | %-9s | %-6s\n", "Tipo", "Posición", "Tenges"));
+        tabla.append("-----------------------------------------------\n");
+    
+        // Agregar tiendas
         for (int i = 0; i < tiendas.length; i++) {
-            showMessage("Pos " + tiendas[i][0] + ": " + tiendas[i][1] + " tenges");
+            tabla.append(String.format("%-8s | %-9d | %-6d\n", "Tienda", tiendas[i][0], tiendas[i][1]));
         }
-        
-        System.out.println("Robots (" + robots.length + "):");
+    
+        // Agregar robots
         for (int i = 0; i < robots.length; i++) {
-            showMessage("Pos " + robots[i][0] + ": " + robots[i][1] + " tenges");
+            tabla.append(String.format("%-8s | %-9d | %-6d\n", "Robot", robots[i][0], robots[i][1]));
         }
+    
+        // Muestra toda la tabla de una sola vez
+        showMessage(tabla.toString());
     }
+
     
     /**
      * Método auxiliar para pausar la simulación.
@@ -236,6 +244,30 @@ public class SilkRoadContest {
     
     //Pruebas de aceptación 
     public void testAceptacion0() {
-        simulate(new int[][] {{1, 20}, {2, 15, 15}, {2, 40, 50}, {1, 50}, {2, 80, 20}, {2, 70, 30} }, true);
+        // Expected Output: 0, 10, 35, 50, 50, 60
+        int[][] sampleInput1 = {
+            {1, 20},        // Día 1: Robot en 20
+            {2, 15, 15},    // Día 2: Tienda en 15 con 15 tenges
+            {2, 40, 50},    // Día 3: Tienda en 40 con 50 tenges
+            {1, 50},        // Día 4: Robot en 50
+            {2, 80, 20},    // Día 5: Tienda en 80 con 20 tenges
+            {2, 70, 30}     // Día 6: Tienda en 70 con 30 tenges
+        };
+        simulate(sampleInput1, true);
+    }
+    
+    public void testAceptacion1() {
+
+        int[][] sampleInput1 = {
+            {1, 10},        // Día 1: Robot en 20
+            {2, 5, 15},     // Día 2: Tienda en 15 con 15 tenges
+            {1, 20},        //
+            {2, 14, 50}, 
+            {1, 6},         // Día 3: Tienda en 40 con 50 tenges// Día 4: Robot en 50
+            {2, 4, 20},     // Día 5: Tienda en 80 con 20 tenges
+            {2, 11, 30}     // Día 6: Tienda en 70 con 30 tenges
+        };
+        simulate(sampleInput1, true);
     }
 }
+    
