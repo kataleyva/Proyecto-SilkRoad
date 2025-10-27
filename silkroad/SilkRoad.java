@@ -765,6 +765,7 @@ public class SilkRoad {
         JOptionPane.showMessageDialog(null, message, "Silk Road Simulator", 
                                         JOptionPane.INFORMATION_MESSAGE);
     }
+    
     //Pruebas de aceptacion
     /**
      * Prueba de aceptación visual para la clase SilkRoad.
@@ -818,8 +819,7 @@ public class SilkRoad {
         System.out.println(" Ruta creada con longitud " + lenRoad);
         System.out.println(" Visualización activada");
         pause(1000);
-        
-        // Configuración inicial
+
         placeStore(2, 100);
         placeStore(5, 75);
         placeStore(8, 50);
@@ -836,8 +836,7 @@ public class SilkRoad {
         placeRobot(10);
         System.out.println("\nobots colocados en posiciones 0, 4 y 10");
         pause(2000);
-        
-        //Movimientos manuales
+
         System.out.println("Los robots se moverán manualmente a las tiendas...");
         pause(1000);
         
@@ -856,8 +855,7 @@ public class SilkRoad {
         int gananciaFase1 = profit();
         System.out.println("\nGanancia después de movimientos manuales: " + gananciaFase1 + " tenges");
         pause(2000);
-        
-        //Historial de tiendas vaciadas
+
         int[][] historial = emptiedStores();
         System.out.println("Consultando historial de tiendas...");
         for (int i = 0; i < historial.length; i++) {
@@ -865,8 +863,7 @@ public class SilkRoad {
                              ": vaciada " + historial[i][1] + " vez(es)");
         }
         pause(2000);
-        
-        // Reabastecimiento de tiendas vacías
+
         System.out.println("Reabasteciendo tiendas vacías...");
         resupplyStores();
         pause(1500);
@@ -878,8 +875,7 @@ public class SilkRoad {
                              ": " + tiendasReabastecidas[i][1] + " tenges");
         }
         pause(2000);
-        
-        // Movimiento automático
+
         System.out.println("Los robots buscarán automáticamente la tienda más rentable...");
         int profitAntes = profit();
         System.out.println("Ganancia antes del movimiento: " + profitAntes + " tenges");
@@ -895,7 +891,6 @@ public class SilkRoad {
         System.out.println("Ganancia total acumulada: " + profitDespues + " tenges");
         pause(2000);
         
-        // Estado actual de robots
         int[][] robotsInfo = robots();
         for (int i = 0; i < robotsInfo.length; i++) {
             System.out.println("  → Robot en posición " + robotsInfo[i][0] + 
@@ -903,7 +898,6 @@ public class SilkRoad {
         }
         pause(2000);
         
-        //Ganancias por movimiento
         int[][] profitsPorMov = profitPerMove();
         for (int i = 0; i < profitsPorMov.length; i++) {
             System.out.print(" Robot pos " + profitsPorMov[i][0] + " - Movimientos: [");
@@ -919,7 +913,6 @@ public class SilkRoad {
         }
         pause(2000);
         
-        // Reinicio
         System.out.println("Reiniciando simulación completa...");
         reboot();
         pause(1500);
