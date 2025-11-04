@@ -1,6 +1,6 @@
 #BlueJ package file
-dependency1.from=Figure
-dependency1.to=Colour
+dependency1.from=Line
+dependency1.to=Canvas
 dependency1.type=UsesDependency
 dependency2.from=Circle
 dependency2.to=Colour
@@ -14,12 +14,12 @@ dependency4.type=UsesDependency
 dependency5.from=Rectangle
 dependency5.to=Canvas
 dependency5.type=UsesDependency
-dependency6.from=Line
-dependency6.to=Canvas
+dependency6.from=Figure
+dependency6.to=Colour
 dependency6.type=UsesDependency
 objectbench.height=83
-objectbench.width=724
-package.divider.horizontal=0.5430906389301634
+objectbench.width=801
+package.divider.horizontal=0.600297176820208
 package.divider.vertical=0.8584905660377359
 package.editor.height=539
 package.editor.width=1213
