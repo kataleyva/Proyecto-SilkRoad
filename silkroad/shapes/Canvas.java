@@ -1,4 +1,4 @@
-package silkroad;
+package shapes;
 
 import javax.swing.*;
 import java.awt.*;
@@ -115,7 +115,44 @@ public class Canvas{
      * Set the foreground colour of the Canvas.
      * @param  newColour   the new colour for the foreground of the Canvas
      */
+    //public void setForegroundColor(String colorString){
+    //    if(colorString.equals("red"))
+    //        graphic.setColor(Color.red);
+    //    else if(colorString.equals("black"))
+    //        graphic.setColor(Color.black);
+    //    else if(colorString.equals("blue"))
+    //        graphic.setColor(Color.blue);
+    //    else if(colorString.equals("yellow"))
+    //        graphic.setColor(Color.yellow);
+    //    else if(colorString.equals("green"))
+    //        graphic.setColor(Color.green);
+    //    else if(colorString.equals("magenta"))
+    //        graphic.setColor(Color.magenta);
+    //    else if(colorString.equals("white"))
+    //        graphic.setColor(Color.white);
+    //    else
+    //        graphic.setColor(Color.black);
+    //}
+    
     public void setForegroundColor(String colorString){
+        // Verificar si es formato RGB
+        if(colorString.startsWith("rgb(") && colorString.endsWith(")")){
+            // Extraer los valores RGB
+            String values = colorString.substring(4, colorString.length()-1);
+            String[] rgb = values.split(",");
+            try {
+                int r = Integer.parseInt(rgb[0].trim());
+                int g = Integer.parseInt(rgb[1].trim());
+                int b = Integer.parseInt(rgb[2].trim());
+                graphic.setColor(new Color(r, g, b));
+                return;
+            } catch (Exception e) {
+                graphic.setColor(Color.black); // Color por defecto si hay error
+                return;
+            }
+        }
+        
+        // Colores predefinidos (código original)
         if(colorString.equals("red"))
             graphic.setColor(Color.red);
         else if(colorString.equals("black"))
@@ -133,7 +170,7 @@ public class Canvas{
         else
             graphic.setColor(Color.black);
     }
-
+    
     /**
      * Wait for a specified number of milliseconds before finishing.
      * This provides an easy way to specify a small delay which can be

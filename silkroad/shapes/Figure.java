@@ -1,62 +1,29 @@
-import java.awt.*;
+package shapes;
+
 
 /**
- * A rectangle that can be manipulated and that draws itself on a canvas.
- *
- * @author  Michael Kolling and David J. Barnes (Modified)
- * @version 1.0  (15 July 2000)()
+ * Write a description of class Figure here.
+ * 
+ * @author (your name) 
+ * @version (a version number or a date)
  */
-
-
-
-public class Rectangle{
-
-    public static int EDGES = 4;
-
-    private int height;
-    private int width;
-    private int xPosition;
-    private int yPosition;
-    private String color;
-    private Colour colour;
-    private boolean isVisible;
-
-    /**
-     * Create a new rectangle at default position with default color.
-     */
-    public Rectangle(){
-        height = 30;
-        width = 30;
-        xPosition = 70;
-        yPosition = 15;
-        this.colour = new Colour();
-        this.color = colour.chooseColorExcluding("black");
-        isVisible = false;
-    }
-
-    public Rectangle(int xPosition, int yPosition){
-        height = 30;
-        width = 30;
-        this.xPosition = xPosition + 300;
-        this.yPosition = yPosition + 300;
-        this.colour = new Colour();
-        this.color = colour.chooseColorExcluding("black");
-        isVisible = false;
-    }    
-    
-    public Rectangle(int xPosition, int yPosition, String color){
-        height = 30;
-        width = 30;
-        this.xPosition = xPosition + 300;
-        this.yPosition = yPosition + 300;
-        this.colour = new Colour();
-        this.color = color;
-        isVisible = false;
-    }    
+public abstract class Figure
+{
+    protected int xPosition;
+    protected int yPosition;
+    protected String color;
+    protected Colour colour;
+    protected boolean isVisible;
     
     public String getColor(){
         return this.color;
     }    
+    
+    public abstract void draw();
+    
+    public abstract void erase();
+    
+    public abstract void changeSize(int newFeatures);
     
     /**
      * Make this rectangle visible. If it was already visible, do nothing.
@@ -161,20 +128,12 @@ public class Rectangle{
             draw();
         }
     }
-
-    /**
-     * Change the size to the new size
-     * @param newHeight the new height in pixels. newHeight must be >=0.
-     * @param newWidht the new width in pixels. newWidth must be >=0.
-     */
-    public void changeSize(int newHeight, int newWidth) {
-        erase();
-        height = newHeight;
-        width = newWidth;
-        draw();
+    
+    public void changeColor(){
+        this.color = colour.chooseColor();
     }
-
-    /**
+    
+        /**
      * Change the color.
      * @param color the new color. Valid colors are "red", "yellow", "blue", "green",
      * "magenta" and "black".
@@ -183,33 +142,8 @@ public class Rectangle{
         this.color = newColor;
         draw();
     }
-    
-    public void changeColor(){
-        this.color = colour.chooseColor();
-    }
 
-    /*
-     * Draw the rectangle with current specifications on screen.
-     */
-
-    private void draw() {
-        if(isVisible) {
-            Canvas canvas = Canvas.getCanvas();
-            canvas.draw(this, color,
-                    new java.awt.Rectangle(xPosition, yPosition,
-                            width, height));
-            canvas.wait(10);
-        }
-    }
-
-    /*
-     * Erase the rectangle on screen.
-     */
-    public void erase(){
-        if(isVisible) {
-            Canvas canvas = Canvas.getCanvas();
-            canvas.erase(this);
-        }
+    public boolean isVisible() {
+        return this.isVisible;
     }
 }
-
