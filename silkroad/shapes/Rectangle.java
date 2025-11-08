@@ -85,8 +85,10 @@ public class Rectangle extends Figure{
         draw();
     }
     
-    public void changeColor(){
-        this.color = colour.chooseColor();
+    public void changeColor(int r, int g, int b){
+        draw();
+        this.color = colour.changeColor(r, g, b);
+        erase();
     }
 
     /*

@@ -1,5 +1,6 @@
 package test;
 import silkroad.SilkRoad;
+import silkroad.Robot;
 import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -64,11 +65,42 @@ public class SilkRoadC4Test
         assertEquals(6, robots[2][0]);
     }
 
-    //Movimiento correcto de tander robots
-    //@Test
-    //public void moveRobotLRShouldTakeOnlyTheHalfOfTheStoreMovit(){
-    //    silkRoad.placeRobot();
-    //}
+    //robots move correctly
+    
+    @Test
+    public void moveRobotLRTenderRobotShouldTakeOnlyTheHalfOfTheStoreProfit(){
+        silkRoad.placeRobot("Tender", 0);
+        silkRoad.placeStore(3, 100); 
+        silkRoad.moveRobot(0, 3);
+        int profit = silkRoad.profit();
+        assertEquals(47, profit); 
+    }
+    
+    @Test
+    public void moveRobotLRNeverBackRobotShouldTakeAllOfTheStoreProfit(){
+        silkRoad.placeRobot("neverBack", 0);
+        silkRoad.placeRobot("Tender", 10);
+        silkRoad.placeStore(3, 100); 
+        silkRoad.moveRobots();
+        int profit = silkRoad.profit();
+        assertEquals(97, profit); 
+    }    
+    
+    @Test
+    public void returnRobotsLRShouldNotCameBackNeverBackRobotsToTheInitialPosition() {
+        silkRoad.placeRobot("neverBack", 0);
+        silkRoad.placeRobot("Tender", 10);
+        silkRoad.placeStore(3, 100);
+    
+        silkRoad.moveRobots();
+    
+        int[][] robotsInfo = silkRoad.robots();
+    
+        // El neverBack empezó en 0, así que buscamos el robot que esté en posición 3 (nuevo lugar)
+        int neverBackPosition = robotsInfo[0][0]; // primer robot: el que se puso en 0
+    
+        assertEquals(3, neverBackPosition);
+    }
     
     /**
      * Tears down the test fixture.

@@ -24,7 +24,7 @@ public class SilkRoad {
     private ArrayList<Robot> robots;
     private final int lenRoad;
     private int[][] posicion;
-    private boolean isVisible;
+    private static boolean isVisible;
     private ArrayList<Line> lineasCamino;
 
     /**
@@ -59,10 +59,11 @@ public class SilkRoad {
                 posicion[i][0], posicion[i][1],
                 posicion[i+1][0], posicion[i+1][1]
             );
-            linea.makeVisible(); 
             lineasCamino.add(linea);
             //pruebas
-            this.isVisible = true;
+            if (isVisible){
+                linea.makeVisible();
+            }
         }
     }
   
@@ -226,7 +227,7 @@ public class SilkRoad {
                 showMessage("No se puede insertar un robot sobre una tienda ya existente.");
             }
         } else {
-            if (type.equals("Tender")){
+            if (type == "Tender"){
                 Robot robot = new TenderRobot(posicion[location], location);
                 robots.add(robot);
                 if (isVisible) {
@@ -234,7 +235,7 @@ public class SilkRoad {
                 }
             }
             
-            if (type.equals("neverBack")){
+            if (type == "neverBack"){
                 Robot robot = new NeverBackRobot(posicion[location], location);
                 robots.add(robot);
                 if (isVisible) {
@@ -376,7 +377,7 @@ public class SilkRoad {
             newStoreTenges = storeTenges/2; 
             storeAtNewLocation.setTenge(newStoreTenges);
             storeAtNewLocation.incrementTimesEmpty();
-        }
+        } 
         
         int gananciaNeta = newStoreTenges - distance;
         robot.setTenge(robot.getTenge() + gananciaNeta);
@@ -710,7 +711,7 @@ public class SilkRoad {
             index++;
         }
         return robotsInfo;
-     }
+    }
     
     /**
      * Retorna las ganancias de cada robot por movimiento,
@@ -809,9 +810,11 @@ public class SilkRoad {
         stores.clear();
         robots.clear();
         makeInvisible();
-        showMessage("Juego finalizado\n");
-        showMessage("Cantidad de tiendas:"+ stores.size() + "\n");
-        showMessage("Cantidad de robots:"+ robots.size() + "\n");
+        if (isVisible){
+            showMessage("Juego finalizado\n");
+            showMessage("Cantidad de tiendas:"+ stores.size() + "\n");
+            showMessage("Cantidad de robots:"+ robots.size() + "\n");
+        }
     }
 
     /**
@@ -962,7 +965,7 @@ public class SilkRoad {
         pause(1500);
         
         int[][] tiendasReabastecidas = stores();
-        System.out.println("✓ Tiendas reabastecidas:");
+        System.out.println("Tiendas reabastecidas:");
         for (int i = 0; i < tiendasReabastecidas.length; i++) {
             System.out.println("  → Posición " + tiendasReabastecidas[i][0] + 
                              ": " + tiendasReabastecidas[i][1] + " tenges");
@@ -1016,6 +1019,16 @@ public class SilkRoad {
         
         makeInvisible();
     }
+
+    
+    /**
+     * Prueba de aceptación completa que demuestra el ciclo completo del simulador
+     * con visualización gráfica y mensajes en consola.
+     */
+    //public void SilkRoadAtest() {
+    //    makeVisible();
+    //    placeRobot("");
+    //}    
     
     public Store getStore(int position){
         return stores.get(position);

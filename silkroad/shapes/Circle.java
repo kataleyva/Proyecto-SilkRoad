@@ -61,7 +61,9 @@ public class Circle extends Figure{
     }
 
     public void changeColor(int r, int g, int b){
-        colour.changeColor(r, g, b);
+        draw();
+        this.color = colour.changeColor(r, g, b);
+        erase();
     }
     
     /**
