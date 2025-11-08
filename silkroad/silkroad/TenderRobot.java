@@ -11,5 +11,6 @@ public class TenderRobot extends Robot
 {
      public TenderRobot(int[] location, int index){
         super(location, index);
+        this.robot.changeColor(67, 100, 204);
     }   
 }

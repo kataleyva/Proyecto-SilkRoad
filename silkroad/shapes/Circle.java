@@ -60,7 +60,10 @@ public class Circle extends Figure{
         }
     }
 
- 
+    public void changeColor(int r, int g, int b){
+        colour.changeColor(r, g, b);
+    }
+    
     /**
      * Change the size.
      * @param newDiameter the new size (in pixels). Size must be >=0.

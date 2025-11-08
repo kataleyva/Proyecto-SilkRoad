@@ -84,17 +84,17 @@ public class Robot {
     }
     
     public void setLocation(int[] location) {
-    this.location = new int[]{location[0], location[1]};
-    if (this.robot != null) {
-        boolean wasVisible = this.robot.isVisible(); // Guardar estado
-        this.robot.makeInvisible();
-        String color = this.robot.getColor();
-        this.robot = new Circle(location[0], location[1], color);
-        if (wasVisible) {  // Solo hacer visible si estaba visible antes
-            this.robot.makeVisible();
+        this.location = new int[]{location[0], location[1]};
+        if (this.robot != null) {
+            boolean wasVisible = this.robot.isVisible(); // Guardar estado
+            this.robot.makeInvisible();
+            String color = this.robot.getColor();
+            this.robot = new Circle(location[0], location[1], color);
+            if (wasVisible) {  // Solo hacer visible si estaba visible antes
+                this.robot.makeVisible();
+            }
         }
     }
-}
     
     public void makeVisible() {
         if (robot != null) {

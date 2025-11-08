@@ -60,8 +60,9 @@ public class SilkRoad {
                 posicion[i+1][0], posicion[i+1][1]
             );
             linea.makeVisible(); 
-            
             lineasCamino.add(linea);
+            //pruebas
+            this.isVisible = true;
         }
     }
   
@@ -314,12 +315,28 @@ public class SilkRoad {
             showMessage("Movimiento inválido: posición " + newLocation + " fuera de rango");
             return;
         }
-         
+        
+        if (!(robot instanceof TenderRobot)){
+            moveNormalRobot(robot, location, meters);
+        } else {
+            moveTenderRobot(robot, location, meters);
+        }
+    }
+
+    /**
+     * Mueve el robot normal que está en la posición location exactamente meters metros.
+     * El robot se mueve la distancia exacta especificada (positiva o negativa).
+     * Si encuentra una tienda en la posición destino, recolecta sus tenges.
+     * @paaram robot que se desea mover.
+     * @param location Posición actual del robot en la ruta.
+     * @param meters Distancia a mover en metros. Positivo para avanzar, negativo para retroceder.
+     */
+    private void moveNormalRobot(Robot robot, int location, int meters){
         int distance = Math.abs(meters);
-    
+        int newLocation = location+meters;
         robot.setIndexLocation(newLocation);
         robot.setLocation(posicion[newLocation]);
-        
+            
         Store storeAtNewLocation = stores.get(newLocation);
         int collectedTenges = 0;
         
@@ -330,6 +347,38 @@ public class SilkRoad {
         }
         
         int gananciaNeta = collectedTenges - distance;
+        robot.setTenge(robot.getTenge() + gananciaNeta);
+        
+        robot.addProfitsInMovements(gananciaNeta);
+    }
+    
+    /**
+     * Mueve el robot Tender que está en la posición location exactamente meters metros.
+     * El robot se mueve la distancia exacta especificada (positiva o negativa).
+     * Si encuentra una tienda en la posición destino, recolecta sus tenges.
+     * @paaram robot que se desea mover.
+     * @param location Posición actual del robot en la ruta.
+     * @param meters Distancia a mover en metros. Positivo para avanzar, negativo para retroceder.
+     */
+    private void moveTenderRobot(Robot robot, int location, int meters){
+        int distance = Math.abs(meters);
+        int newLocation = location+meters;
+        robot.setIndexLocation(newLocation);
+        robot.setLocation(posicion[newLocation]);
+            
+        Store storeAtNewLocation = stores.get(newLocation);
+        int storeTenges;
+        int collectedTenges;
+        int newStoreTenges = 0; 
+            
+        if (storeAtNewLocation != null && storeAtNewLocation.getTenge() > 0) {
+            storeTenges = storeAtNewLocation.getTenge();
+            newStoreTenges = storeTenges/2; 
+            storeAtNewLocation.setTenge(newStoreTenges);
+            storeAtNewLocation.incrementTimesEmpty();
+        }
+        
+        int gananciaNeta = newStoreTenges - distance;
         robot.setTenge(robot.getTenge() + gananciaNeta);
         
         robot.addProfitsInMovements(gananciaNeta);
@@ -504,7 +553,7 @@ public class SilkRoad {
      */
     public void returnRobots(){
         for (Robot robot: robots) {
-            if (robot.getLocation() != robot.getInitialLocation()){
+            if (!(robot instanceof NeverBackRobot) && robot.getLocation() != robot.getInitialLocation()){
                 robot.resetRobotLocation();
             }
         }
