@@ -4,13 +4,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class Store {
-    private Rectangle base;  
-    private int[] location;
-    private int index;
-    private int tengeInitial;
-    private int tenge;
-    private int timesEmpty = 0;
-    private String initialColor;
+    protected Rectangle base;  
+    protected int[] location;
+    protected int index;
+    protected int tengeInitial;
+    protected int tenge;
+    protected int timesEmpty = 0;
+    protected String initialColor;
     
     public Store(int[] location, int tenges, int index) {
        this.base = new Rectangle(location[0], location[1]);
