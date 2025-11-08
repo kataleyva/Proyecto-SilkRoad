@@ -11,5 +11,6 @@ public class NeverBackRobot extends Robot
 {
      public NeverBackRobot(int[] location, int index){
         super(location, index);
+        this.robot.changeColor(67, 204, 76);
     }   
 }

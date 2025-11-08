@@ -8,15 +8,23 @@ public class Colour {
     
     public String chooseColorExcluding(String excludedColor) {
         String color;
+        int r;
+        int g;
+        int b;
         do {
-            int r = random.nextInt(256);
-            int g = random.nextInt(256);
-            int b = random.nextInt(256);
+            r = random.nextInt(256);
+            g = random.nextInt(256);
+            b = random.nextInt(256);
             color = "rgb(" + r + "," + g + "," + b + ")";
-        } while (colorsUsed.contains(color) || color.equals(excludedColor));
+        } while (colorsUsed.contains(color) || color.equals(excludedColor) || !(r != 67 && g != 100 && b != 204) || !(r != 67 && g != 204 && b != 76));
         
         colorsUsed.add(color);
         return color;
+    }
+    
+    public String changeColor(int r, int g, int b){
+       String color = "rgb(" + r + "," + g + "," + b + ")";
+       return color;
     }
     
     public String chooseColor() {
