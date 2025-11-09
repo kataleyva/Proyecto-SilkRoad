@@ -71,7 +71,7 @@ public class Store {
         this.base.makeInvisible();
     }
 
-    private void updateVisualState() {
+    protected void updateVisualState() {
         if (base != null) {
             if (tenge <= 0) {
                 base.changeColor("gray");
@@ -79,5 +79,16 @@ public class Store {
                 base.changeColor(initialColor);
             }
         }
+    }
+    
+    public int attemptCollection(int robotCurrentTenge){
+        if (this.tenge>0){
+            int collected=this.tenge;
+            this.tenge=0;
+            this.incrementTimesEmpty();
+            updateVisualState();
+            return collected;
+        }
+        return 0;
     }
 }

@@ -170,8 +170,67 @@ public class SilkRoad {
             }
         }
     }
-
     /**
+     *Coloca una tienda de tipo especifico en la ruta
+     *@param type  Tipo de tienda(autonomus,fighter,bonus o normal
+     *@param location Posicion sigerida donde colocar la tienda
+     *@param tenges Cantidad inicial de tenges
+     */
+    public void placeStore(String type, int location, int tenges){
+        if (location<0 || location >=lenRoad){
+            if(isVisible) showMessage("Posicion"+location+"fuera de rango valido");
+            return;
+        }
+        if (stores.get(location) != null){
+            if (isVisible) showMessage("Ya existe una tienda en la posicion");
+            return;
+        }
+        if (getFirstRobotAtLocation(location) != null){
+            if (isVisible) showMessage("No se puede colocar la tienda en una posicion ocupada por un robot");
+        }
+        Store store;
+        switch (type.toLowerCase()){
+            case "fighter":
+                store = new Fighter(this.posicion[location],tenges,location);
+                break;
+            case "autonomous":
+                int autonomousLocation=findAvailableLocation(location);
+                store = new Autonomous(this.posicion[autonomousLocation],tenges,autonomousLocation,lenRoad);
+                break;
+            case "bonus":
+                store = new Bonus(this.posicion[location],tenges,location);
+                break;
+            case "normal":
+            default:
+                store=new Store(this.posicion[location],tenges,location);
+                break;
+        }
+        stores.put(location,store);
+        if (isVisible){
+            store.makeVisible();
+        }
+            
+    }
+    /**
+     * Metodo auxiliar para encontrar una ubicacion cerca disponible
+     * para la tienda autonomous
+     */
+    private int findAvailableLocation(int suggestedLocation){
+        Random random = new Random();
+        int attempts = 0;
+        int newLocation = suggestedLocation;
+        while(attempts < 0 ){
+            int offset= random.nextInt(5)-2 ;
+            newLocation=Math.max(0,Math.min(lenRoad-1,suggestedLocation+offset));
+            if(stores.get(newLocation)==null && getFirstRobotAtLocation(newLocation)==null){
+                return newLocation;
+            }
+            attempts++;
+        }
+        return suggestedLocation;
+    }
+    /**
+     * 
      * Elimina una tienda de la ruta en una ubicación específica.
      * Si no existe una tienda en esa ubicación, muestra un mensaje de error.
      * 
@@ -186,7 +245,6 @@ public class SilkRoad {
             showMessage("No hay tienda en la posición " + location);
         }
     }
-
     /**
      * Coloca un robot en la ruta en una ubicación específica.
      * Si ya existe un robot en esa ubicación, muestra un mensaje de error.
@@ -342,7 +400,7 @@ public class SilkRoad {
         int collectedTenges = 0;
         
         if (storeAtNewLocation != null && storeAtNewLocation.getTenge() > 0) {
-            collectedTenges = storeAtNewLocation.getTenge();
+            collectedTenges = storeAtNewLocation.attemptCollection(robot.getTenge());
             storeAtNewLocation.setTenge(0);
             storeAtNewLocation.incrementTimesEmpty();
         }
