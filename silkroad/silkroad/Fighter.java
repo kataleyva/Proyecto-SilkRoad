@@ -19,7 +19,7 @@ public class Fighter extends Store {
     }
     
     /**
-     * Verifica si un robot puede saquear esta tienda
+     * Check if a robot can loot this store
      * @param robotTenge cantidad de tenges que tiene el robot
      * @return true si el robot puede saquear, false si no cumple el requisito
      */
@@ -28,8 +28,8 @@ public class Fighter extends Store {
     }
     
     /**
-     * Intenta recolectar tenges de esta tienda fighter
-     * Solo permite la recolección si el robot tiene más tenges que la tienda
+     * Try to collect tenges from this fighter store
+     * Only allows collection if the robot has more tenges than the store
      * @param robotCurrentTenge los tenges actuales del robot que intenta saquear
      * @return los tenges que realmente fueron recolectados (0 si no cumple el requisito)
      */
@@ -40,16 +40,12 @@ public class Fighter extends Store {
             this.incrementTimesEmpty();
             updateVisualState();
             return collected;
-        } else if (this.tenge > 0) {
+        } else if (this.tenge>0){
             return 0;
         }
         return 0;
     }
-    
-    /**
-     * Override del método setTenge para prevenir cambios no autorizados
-     * Pero mantiene funcionalidad para reabastecimiento
-     */
+
     @Override
     public void setTenge(int newTenge) {
         // Solo permite cambios si es reabastecimiento (nuevo valor = valor inicial)
@@ -61,10 +57,7 @@ public class Fighter extends Store {
         else if (newTenge != this.tenge) {;
         }
     }
-    
-    /**
-     * Override para mostrar comportamiento visual diferente
-     */
+
     @Override
     public void makeVisible() {
         super.makeVisible();

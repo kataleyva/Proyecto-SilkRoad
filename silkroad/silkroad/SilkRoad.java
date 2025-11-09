@@ -172,8 +172,8 @@ public class SilkRoad {
         }
     }
     /**
-     *Coloca una tienda de tipo especifico en la ruta
-     *@param type  Tipo de tienda(autonomus,fighter,bonus o normal
+     *Place a specific type of store on the route
+     *@param type  Tipo de tienda("autonomus","fighter","bonus" o "normal"
      *@param location Posicion sigerida donde colocar la tienda
      *@param tenges Cantidad inicial de tenges
      */
@@ -188,6 +188,7 @@ public class SilkRoad {
         }
         if (getFirstRobotAtLocation(location) != null){
             if (isVisible) showMessage("No se puede colocar la tienda en una posicion ocupada por un robot");
+            return;
         }
         Store store;
         switch (type.toLowerCase()){

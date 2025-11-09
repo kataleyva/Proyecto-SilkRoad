@@ -12,14 +12,10 @@ public class Bonus extends Store {
     
     public Bonus(int[] location, int tenges, int index) {
         super(location, tenges, index);
-        // Cambiar color para distinguir visualmente (verde para bonus)
         this.base.changeColor("pink");
         this.initialColor = "pink";
     }
-    
-    /**
-     * Override: Da 50% más tenges cuando es saqueada
-     */
+
     @Override
     public int attemptCollection(int robotCurrentTenge) {
         if (this.tenge > 0) {
@@ -31,10 +27,7 @@ public class Bonus extends Store {
         }
         return 0;
     }
-    
-    /**
-     * Override para mostrar comportamiento visual diferente
-     */
+
     @Override
     public void makeVisible() {
         super.makeVisible();
