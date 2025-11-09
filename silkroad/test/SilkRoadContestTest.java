@@ -156,6 +156,7 @@ public class SilkRoadContestTest {
         assertEquals(200, resultado[3], 
             "Día 4: Robot1→Tienda1 (80) + Robot2→Tienda2 (120) = 200");
     }
+    
     /**
      * Verifica que solve() NO debería calcular ganancia cuando no hay robots.
      * Solo tiendas disponibles, sin robots para saquearlas.
@@ -174,6 +175,7 @@ public class SilkRoadContestTest {
         assertEquals(0, resultado[1], 
             "Día 2: Sin robots para saquear, ganancia = 0");
     }
+    
      /**
      * Verifica que solve() NO debería calcular ganancia cuando no hay tiendas.
      * Solo robots disponibles, sin tiendas para saquear.
@@ -192,6 +194,7 @@ public class SilkRoadContestTest {
         assertEquals(0, resultado[1], "Día 2: Sin tiendas, ganancia = 0");
         assertEquals(0, resultado[2], "Día 3: Sin tiendas, ganancia = 0");
     }
+    
     /**
      * Verifica que solve() NO debería permitir ganancias negativas.
      * Cuando el costo de movimiento excede los tenges, el robot no debe moverse.
@@ -208,6 +211,7 @@ public class SilkRoadContestTest {
         assertEquals(0, resultado[1], 
             "Día 2: Ganancia sería negativa (30-100=-70), robot no se mueve = 0");
     }
+    
     /**
      * Verifica que solve() NO debería asignar mal cuando hay más robots que tiendas.
      * Solo los robots más rentables deberían moverse.
@@ -229,6 +233,7 @@ public class SilkRoadContestTest {
         assertEquals(95, resultado[3], 
             "Día 4: Solo el robot más rentable saquea. Robot2→Tienda = 95");
     }
+    
     /**
     * Verifica que solve() NO debería aceptar posiciones negativas.
     * Las posiciones deben ser >= 0.
