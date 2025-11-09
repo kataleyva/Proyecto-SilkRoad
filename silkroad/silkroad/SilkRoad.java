@@ -382,6 +382,42 @@ public class SilkRoad {
             moveTenderRobot(robot, location, meters);
         }
     }
+    /**
+     * Mueve el robot usando el sistema de attemptCollection para cumplir con el comportamiento
+     * y reglas de Fighter
+     * @param Location Posicion actual del robot
+     * @param meter Distancia que se mueve
+     */
+    public void moveRobotInFighter(int location, int meters) {
+    if (meters == 0) return;
+     
+    Robot robot = getFirstRobotAtLocation(location);
+    if (robot == null) {
+        showMessage("No hay robot en la posición " + location);
+        return;
+    }
+
+    int newLocation = location + meters;
+    if (newLocation < 0 || newLocation >= lenRoad) {
+        showMessage("Movimiento inválido: posición " + newLocation + " fuera de rango");
+        return;
+    }
+     
+    int distance = Math.abs(meters);
+    robot.setIndexLocation(newLocation);
+    robot.setLocation(posicion[newLocation]);
+    
+    Store storeAtNewLocation = stores.get(newLocation);
+    int collectedTenges = 0;
+    
+    if (storeAtNewLocation != null && storeAtNewLocation.getTenge() > 0) {
+        collectedTenges = storeAtNewLocation.attemptCollection(robot.getTenge());
+    }
+    
+    int gananciaNeta = collectedTenges - distance;
+    robot.setTenge(robot.getTenge() + gananciaNeta);
+    robot.addProfitsInMovements(gananciaNeta);
+    }
 
     /**
      * Mueve el robot normal que está en la posición location exactamente meters metros.
@@ -1091,6 +1127,132 @@ public class SilkRoad {
     
     public Store getStore(int position){
         return stores.get(position);
+    }
+    
+    /**
+    * Prueba de aceptación B para SilkRoad - Enfocada en tiendas especiales y movimientos estratégicos
+    */
+    public void SilkRoadBTest() {
+        makeVisible();
+        JOptionPane.showMessageDialog(null,"Inicio de Prueba de Aceptación B - Tiendas Especiales\n\n" +
+        "Ruta creada con longitud: " + lenRoad + "\n" +
+        "Esta prueba se enfoca en tiendas Fighter, Bonus y comportamientos especiales",
+        "Inicio Prueba B", JOptionPane.INFORMATION_MESSAGE);
+        // Colocar tiendas especiales
+        placeStore("fighter", 3, 200);
+        placeStore("bonus", 6, 100);
+        placeStore("autonomous", 9, 150);
+        placeStore("normal", 12, 80);
+        JOptionPane.showMessageDialog(null,
+        "Tiendas especiales creadas:\n" +
+        "Fighter en posición 3 (200 tenges - requiere robot rico)\n" +
+        "Bonus en posición 6 (100 tenges - da 50% extra)\n" +
+        "Autonomous en posición 9 (150 tenges - se mueve aleatoriamente)\n" +
+        "Normal en posición 12 (80 tenges)",
+        "Tiendas Especiales", JOptionPane.INFORMATION_MESSAGE);
+        // Colocar robots con diferentes tipos
+        placeRobot(0);  // Robot normal
+        placeRobot("neverBack", 2);  // Robot que nunca retrocede
+        placeRobot("Tender", 5);     // Robot que toma solo la mitad
+        JOptionPane.showMessageDialog(null,
+        "Robots colocados:\n" +
+        "Robot Normal en posición 0\n" +
+        "NeverBack Robot en posición 2\n" +
+        "Tender Robot en posición 5\n\n" +
+        "Cada robot tiene estrategias diferentes de movimiento y saqueo",
+        "Robots Especializados", JOptionPane.INFORMATION_MESSAGE);
+        // Fase 1: Movimientos manuales a tiendas específicas
+        JOptionPane.showMessageDialog(null,
+        "FASE 1: Movimientos Manuales\n\n" +
+        "Los robots se moverán manualmente a tiendas específicas\n" +
+        "para demostrar sus comportamientos individuales",
+        "Fase 1", JOptionPane.INFORMATION_MESSAGE);
+        // Robot normal intenta saquear tienda Fighter (debería fallar por ser pobre)
+        moveRobot(0, 3);
+        int profitFase1 = profit();
+        JOptionPane.showMessageDialog(null,
+        "Movimiento 1: Robot Normal → Tienda Fighter\n" +
+        "Robot pobre (0 tenges) vs Fighter (200 tenges)\n" +
+        "Resultado: No puede saquear (requiere >200 tenges)\n" +
+        "Ganancia acumulada: " + profitFase1 + " tenges",
+        "Movimiento 1", JOptionPane.INFORMATION_MESSAGE);
+        // Tender robot saquea tienda Bonus (toma solo la mitad)
+        moveRobot(5, 1);
+        int profitFase2 = profit();
+        JOptionPane.showMessageDialog(null,
+        "Movimiento 2: Tender Robot → Tienda Bonus\n" +
+        "Tender toma solo el 50% de los tenges\n" +
+        "Bonus Store da 50% extra (100 → 150)\n" +
+        "Tender recibe: 75 tenges - distancia\n" +
+        "Ganancia acumulada: " + profitFase2 + " tenges",
+        "Movimiento 2", JOptionPane.INFORMATION_MESSAGE);
+        // Fase 2: Movimiento automático estratégico
+        JOptionPane.showMessageDialog(null,
+        "FASE 2: Movimiento Automático\n\n" +
+        "Los robots decidirán automáticamente sus movimientos\n" +
+        "buscando maximizar las ganancias totales",
+        "Fase 2", JOptionPane.INFORMATION_MESSAGE);
+        moveRobots();
+        int profitAutomatico = profit();
+        JOptionPane.showMessageDialog(null,
+        "Movimiento automático completado\n\n" +
+        "Ganancia después de movimiento automático: " + profitAutomatico + " tenges\n" +
+        "Los robots han calculado la ruta más rentable considerando:\n" +
+        "Distancias entre posiciones\n" +
+        "Tenges disponibles en tiendas\n" +
+        "Comportamientos especiales de cada robot",
+        "Movimiento Automático", JOptionPane.INFORMATION_MESSAGE);
+        // Fase 3: Reabastecimiento y retorno
+        JOptionPane.showMessageDialog(null,
+        "FASE 3: Mantenimiento del Sistema\n\n" +
+        "Reabastecimiento de tiendas vacías\n" +
+        "Retorno de robots a posiciones iniciales",
+        "Fase 3", JOptionPane.INFORMATION_MESSAGE);
+        resupplyStores();
+        returnRobots();
+        // Mostrar estado final
+        int[][] storesInfo = stores();
+        int[][] robotsInfo = robots();
+        StringBuilder estadoFinal = new StringBuilder();
+        estadoFinal.append("ESTADO FINAL DEL SISTEMA\n\n");
+        estadoFinal.append("TIENDAS REABASTECIDAS:\n");
+        for (int[] store : storesInfo) {
+            estadoFinal.append("• Posición ").append(store[0])
+            .append(": ").append(store[1]).append(" tenges\n");
+        }
+        estadoFinal.append("\nROBOTS EN POSICIONES INICIALES:\n");
+        for (int[] robot : robotsInfo) {
+            estadoFinal.append("• Posición ").append(robot[0])
+            .append(": ").append(robot[1]).append(" tenges acumulados\n");
+        }
+        estadoFinal.append("\nGanancia total final: ").append(profitAutomatico).append(" tenges");
+        JOptionPane.showMessageDialog(null,
+        estadoFinal.toString(),
+        "Estado Final", JOptionPane.INFORMATION_MESSAGE);
+        // Evaluación final
+        int respuesta = JOptionPane.showConfirmDialog(null,
+        "RESUMEN DE LA PRUEBA B:\n\n" +
+        "Tiendas especiales (Fighter, Bonus, Autonomous) funcionando\n" +
+        "Robots con comportamientos diferenciados\n" +
+        "Movimiento manual demostrando reglas especiales\n" +
+        "Movimiento automático optimizando ganancias\n" +
+        "Sistema de reabastecimiento y retorno\n\n" +
+        "Ganancia final: " + profitAutomatico + " tenges\n\n" +
+        "¿El comportamiento observado fue el esperado?",
+        "Evaluación Final - Prueba B", JOptionPane.YES_NO_OPTION);
+        if (respuesta == JOptionPane.YES_OPTION) {
+            JOptionPane.showMessageDialog(null,
+            "PRUEBA DE ACEPTACIÓN B APROBADA\n\n" +
+            "Todas las funcionalidades de tiendas especiales\n" +
+            "y robots especializados funcionan correctamente.",
+            "Prueba Exitosa", JOptionPane.INFORMATION_MESSAGE);
+        } else {
+            JOptionPane.showMessageDialog(null,
+            "Prueba de aceptación B requiere ajustes.\n" +
+            "Revise el comportamiento de las tiendas especiales.",
+            "Prueba con Observaciones", JOptionPane.WARNING_MESSAGE);
+        }
+        makeInvisible();
     }
     
     /**
