@@ -21,7 +21,9 @@ public class Autonomous extends Store {
         this.initialColor = "orange";
     }
     /**
-     * Elige una posicion aleatoria cerca a la posicion sigerida
+     * Choose a random position close to the suggested position
+     * @param Posicion sugerida por el usuario
+     * @return Arreglo con la nueva posicion cercana a la sugerida
      */
     private static int [] chooseRandomPosition(int[] suggestedLocation){
         int offsetX = random.nextInt(121) - 60; 
@@ -30,13 +32,9 @@ public class Autonomous extends Store {
         int newY = Math.max(50, Math.min(suggestedLocation[1] + offsetY, 550));
         return new int[]{newX, newY};  
     }
-    /**
-     * Override del método attemptCollection para comportamiento específico
-     */
+
     @Override
     public int attemptCollection(int robotCurrentTenge) {
-        // AutonomousStore tiene comportamiento normal de saqueo
-        // pero podemos agregar algún mensaje o comportamiento especial
         int collected = super.attemptCollection(robotCurrentTenge);
         if (collected > 0) {
             System.out.println("AutonomousStore en posición única [" + this.location[0] + "," + this.location[1] + "] fue saqueada");
@@ -44,9 +42,6 @@ public class Autonomous extends Store {
         return collected;
     }
     
-    /**
-     * Override para mostrar comportamiento visual diferente
-     */
     @Override
     public void makeVisible() {
         super.makeVisible();

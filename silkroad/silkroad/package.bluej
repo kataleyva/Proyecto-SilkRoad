@@ -1,20 +1,31 @@
 #BlueJ package file
-dependency1.from=SilkRoadContest
-dependency1.to=SilkRoad
+dependency1.from=SilkRoadContestTest
+dependency1.to=SilkRoadContest
 dependency1.type=UsesDependency
 dependency10.from=SilkRoad
+<<<<<<< HEAD
 dependency10.to=Posicion
 dependency10.type=UsesDependency
 dependency2.from=SilkRoadContest
 dependency2.to=Robot
+=======
+dependency10.to=NeverBackRobot
+dependency10.type=UsesDependency
+dependency11.from=SilkRoad
+dependency11.to=Posicion
+dependency11.type=UsesDependency
+dependency2.from=SilkRoadC2Test
+dependency2.to=SilkRoad
+>>>>>>> 15d2883ad85efb1f255daddd546d92eb2a32c964
 dependency2.type=UsesDependency
-dependency3.from=SilkRoad
-dependency3.to=Store
+dependency3.from=SilkRoadContest
+dependency3.to=SilkRoad
 dependency3.type=UsesDependency
-dependency4.from=SilkRoad
+dependency4.from=SilkRoadContest
 dependency4.to=Robot
 dependency4.type=UsesDependency
 dependency5.from=SilkRoad
+<<<<<<< HEAD
 dependency5.to=Fighter
 dependency5.type=UsesDependency
 dependency6.from=SilkRoad
@@ -35,12 +46,54 @@ package.divider.horizontal=0.6001506024096386
 package.divider.vertical=0.8656957928802589
 package.editor.height=528
 package.editor.width=1195
+=======
+dependency5.to=Store
+dependency5.type=UsesDependency
+dependency6.from=SilkRoad
+dependency6.to=Robot
+dependency6.type=UsesDependency
+dependency7.from=SilkRoad
+dependency7.to=Fighter
+dependency7.type=UsesDependency
+<<<<<<< HEAD
+objectbench.height=87
+objectbench.width=792
+package.divider.horizontal=0.6016566265060241
+package.divider.vertical=0.8478964401294499
+package.editor.height=517
+package.editor.width=1208
+>>>>>>> 15d2883ad85efb1f255daddd546d92eb2a32c964
 package.editor.x=1
 package.editor.y=1
 package.frame.height=718
 package.frame.width=1364
+<<<<<<< HEAD
 package.numDependencies=10
 package.numTargets=11
+=======
+package.numDependencies=7
+package.numTargets=9
+=======
+dependency8.from=SilkRoad
+dependency8.to=Bonus
+dependency8.type=UsesDependency
+dependency9.from=SilkRoad
+dependency9.to=TenderRobot
+dependency9.type=UsesDependency
+objectbench.height=136
+objectbench.width=1346
+package.divider.horizontal=0.6
+package.divider.vertical=0.7921511627906976
+package.editor.height=538
+package.editor.width=1217
+package.editor.x=4
+package.editor.y=26
+package.frame.height=788
+package.frame.width=1386
+package.numDependencies=11
+package.numTargets=12
+>>>>>>> Mich
+>>>>>>> 15d2883ad85efb1f255daddd546d92eb2a32c964
 package.showExtends=true
 package.showUses=true
 readme.height=60
@@ -49,6 +102,7 @@ readme.width=49
 readme.x=10
 readme.y=10
 target1.height=70
+<<<<<<< HEAD
 target1.name=Fighter
 target1.showInterface=false
 target1.type=ClassTarget
@@ -69,11 +123,41 @@ target11.type=ClassTarget
 target11.width=120
 target11.x=220
 target11.y=10
+=======
+target1.name=SilkRoadContestTest
+target1.showInterface=false
+target1.type=UnitTestTargetJunit5
+target1.width=150
+target1.x=550
+target1.y=300
+target10.height=70
+target10.name=Autonomous
+target10.showInterface=false
+target10.type=ClassTarget
+target10.width=140
+target10.x=140
+target10.y=300
+target11.height=70
+target11.name=Robot
+target11.showInterface=false
+target11.type=ClassTarget
+target11.width=120
+target11.x=740
+target11.y=380
+target12.height=70
+target12.name=Posicion
+target12.showInterface=false
+target12.type=ClassTarget
+target12.width=120
+target12.x=320
+target12.y=60
+>>>>>>> 15d2883ad85efb1f255daddd546d92eb2a32c964
 target2.height=70
 target2.name=TenderRobot
 target2.showInterface=false
 target2.type=ClassTarget
 target2.width=120
+<<<<<<< HEAD
 target2.x=520
 target2.y=330
 target3.height=70
@@ -90,11 +174,30 @@ target4.type=ClassTarget
 target4.width=120
 target4.x=220
 target4.y=130
+=======
+target2.x=670
+target2.y=490
+target3.height=70
+target3.name=Fighter
+target3.showInterface=false
+target3.type=ClassTarget
+target3.width=120
+target3.x=150
+target3.y=410
+target4.height=70
+target4.name=SilkRoadC2Test
+target4.showInterface=false
+target4.type=UnitTestTargetJunit4
+target4.width=120
+target4.x=370
+target4.y=260
+>>>>>>> 15d2883ad85efb1f255daddd546d92eb2a32c964
 target5.height=70
 target5.name=FighterStore
 target5.showInterface=false
 target5.type=ClassTarget
 target5.width=120
+<<<<<<< HEAD
 target5.x=270
 target5.y=390
 target6.height=70
@@ -125,3 +228,35 @@ target9.type=ClassTarget
 target9.width=120
 target9.x=460
 target9.y=450
+=======
+target5.x=340
+target5.y=350
+target6.height=70
+target6.name=Bonus
+target6.showInterface=false
+target6.type=ClassTarget
+target6.width=120
+target6.x=348
+target6.y=469
+target7.height=70
+target7.name=SilkRoadContest
+target7.showInterface=false
+target7.type=ClassTarget
+target7.width=130
+target7.x=650
+target7.y=210
+target8.height=70
+target8.name=SilkRoad
+target8.showInterface=false
+target8.type=ClassTarget
+target8.width=120
+target8.x=470
+target8.y=140
+target9.height=70
+target9.name=NeverBackRobot
+target9.showInterface=false
+target9.type=ClassTarget
+target9.width=130
+target9.x=830
+target9.y=540
+>>>>>>> 15d2883ad85efb1f255daddd546d92eb2a32c964
