@@ -1,4 +1,8 @@
 *.class
 *.ctxt
 *.log
+<<<<<<< HEAD
 package.bluej
+=======
+*.bluej
+>>>>>>> 22f5450 (Excluir archivos .bluej para evitar conflictos)
