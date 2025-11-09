@@ -10,6 +10,7 @@ import javax.swing.JOptionPane;
 import java.util.List;
 import java.util.*;
 
+
 /**
  * Clase que representa el simulador de la Ruta de la Seda.
  * 
@@ -1078,15 +1079,76 @@ public class SilkRoad {
         makeInvisible();
     }
 
+
+    public void SilkRoadATest() {
+
+        makeVisible();
+        JOptionPane.showMessageDialog(null,
+            "Inicio de prueba de aceptación\n\n" +
+            "Ruta creada con longitud: " + lenRoad,
+            "Inicio", JOptionPane.INFORMATION_MESSAGE);
     
-    /**
-     * Prueba de aceptación completa que demuestra el ciclo completo del simulador
-     * con visualización gráfica y mensajes en consola.
-     */
-    //public void SilkRoadAtest() {
-    //    makeVisible();
-    //    placeRobot("");
-    //}    
+        placeStore(5, 75);
+        placeStore(8, 50);
+        placeStore(12, 120);
+    
+        JOptionPane.showMessageDialog(null,
+            "Tiendas creadas:\n" +
+            "Normal en 2 (100 tenges)\n" +
+            "Autonomous en 5 (75 tenges)\n" +
+            "Fighter en 8 (50 tenges)\n" +
+            "Normal en 12 (120 tenges)",
+            "Tiendas", JOptionPane.INFORMATION_MESSAGE);
+    
+        placeRobot(0);
+        placeRobot("neverBack", 4);
+        placeRobot("Tender", 10);
+    
+        JOptionPane.showMessageDialog(null,
+            "Robots colocados:\n" +
+            "Normal en 0\n" +
+            "NeverBack en 4\n" +
+            "Tender en 10",
+            "Robots", JOptionPane.INFORMATION_MESSAGE);
+    
+        moveRobot(0, 2);
+        moveRobot(4, 5);
+        moveRobot(10, 8);
+    
+        int profitManual = profit();
+        JOptionPane.showMessageDialog(null,
+            "Ganancia acumulada: " + profitManual + " tenges",
+            "Movimiento manual", JOptionPane.INFORMATION_MESSAGE);
+    
+        moveRobots();
+        int profitTotal = profit();
+    
+        JOptionPane.showMessageDialog(null,
+            "Ganancia total acumulada: " + profitTotal + " tenges",
+            "Movimiento automático", JOptionPane.INFORMATION_MESSAGE);
+    
+        resupplyStores();
+        JOptionPane.showMessageDialog(null,
+            "Tiendas reabastecidas correctamente.",
+            "Reabastecimiento", JOptionPane.INFORMATION_MESSAGE);
+    
+        int respuesta = JOptionPane.showConfirmDialog(null,
+            "Ganancia final: " + profitTotal + " tenges.\n\n" +
+            "¿El comportamiento observado fue el esperado?",
+            "Resultado final", JOptionPane.YES_NO_OPTION);
+    
+        if (respuesta == JOptionPane.YES_OPTION) {
+            JOptionPane.showMessageDialog(null,
+                "Prueba de aceptación aprobada por el usuario.",
+                "Resultado", JOptionPane.INFORMATION_MESSAGE);
+        } else {
+            JOptionPane.showMessageDialog(null,
+                "Prueba de aceptación rechazada por el usuario.",
+                "Resultado", JOptionPane.ERROR_MESSAGE);
+        }
+    
+        makeInvisible();
+    }
     
     public Store getStore(int position){
         return stores.get(position);
