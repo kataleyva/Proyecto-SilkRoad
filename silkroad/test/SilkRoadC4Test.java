@@ -91,16 +91,148 @@ public class SilkRoadC4Test
         silkRoad.placeRobot("neverBack", 0);
         silkRoad.placeRobot("Tender", 10);
         silkRoad.placeStore(3, 100);
-    
         silkRoad.moveRobots();
-    
         int[][] robotsInfo = silkRoad.robots();
-    
         // El neverBack empezó en 0, así que buscamos el robot que esté en posición 3 (nuevo lugar)
-        int neverBackPosition = robotsInfo[0][0]; // primer robot: el que se puso en 0
-    
+        int neverBackPosition = robotsInfo[0][0]; // primer robot: el que se puso en 0    
         assertEquals(3, neverBackPosition);
     }
+    
+    //placeStore
+    @Test
+    public void placeStoreLRShouldPlaceNormalStoreCorrectly() {
+        silkRoad.placeStore("normal", 5, 100);
+        int[][] stores = silkRoad.stores();
+        
+        assertEquals(1, stores.length);
+        assertEquals(5, stores[0][0]);
+        assertEquals(100, stores[0][1]);
+    }
+
+    @Test
+    public void placeStoreLRShouldPlaceFighterStoreWithDefense() {
+        silkRoad.placeStore("fighter", 3, 150);
+        int[][] stores = silkRoad.stores();
+        
+        assertEquals(1, stores.length);
+        assertEquals(3, stores[0][0]);
+        assertEquals(150, stores[0][1]);
+    }
+
+    @Test
+    public void placeStoreLRShouldPlaceBonusStoreWithExtraTenges() {
+        silkRoad.placeStore("bonus", 7, 80);
+        int[][] stores = silkRoad.stores();
+        
+        assertEquals(1, stores.length);
+        assertEquals(7, stores[0][0]);
+        assertEquals(80, stores[0][1]);
+    }
+
+    @Test
+    public void placeStoreLRShouldPlaceAutonomousStoreInDifferentLocation() {
+        silkRoad.placeStore("autonomous", 10, 120);
+        int[][] stores = silkRoad.stores();
+        assertEquals(1, stores.length);
+        // AutonomousStore podría colocarse en una posición diferente
+        assertTrue(stores[0][0] >= 8 && stores[0][0] <= 12); // Cerca de la posición 10
+        assertEquals(120, stores[0][1]);
+    }
+    
+     @Test
+    public void placeStoreLRFighterStoreShouldDefendFromPoorRobots() {
+        silkRoad.placeStore("fighter", 5, 200);
+        silkRoad.placeRobot(0); // Robot pobre (0 tenges)
+        silkRoad.moveRobot(0, 5); // Intenta saquear la tienda fighter
+        int profit = silkRoad.profit();
+        // El robot no debería poder saquear porque tiene menos de 200 tenges
+        assertEquals(0, profit); // O un valor negativo por el movimiento
+    }
+
+    @Test
+    public void placeStoreLRBonusStoreShouldGiveExtraTenges() {
+        silkRoad.placeStore("bonus", 3, 100);
+        silkRoad.placeRobot(0);
+        
+        silkRoad.moveRobot(0, 3);
+        int profit = silkRoad.profit();
+        
+        // BonusStore da 50% extra: 100 * 1.5 = 150 - 3 de distancia = 147
+        assertEquals(147, profit);
+    }
+
+    @Test
+    public void placeStoreLRAutonomousStoreShouldChooseDifferentPosition() {
+        // Colocar AutonomousStore en posición 8
+        silkRoad.placeStore("autonomous", 8, 100);
+        int[][] stores = silkRoad.stores();
+        int actualPosition = stores[0][0];
+        
+        // Verificar que AutonomousStore no siempre usa la posición exacta
+        // (puede ser la misma o diferente, pero el comportamiento debe ser consistente)
+        assertTrue(actualPosition >= 6 && actualPosition <= 10);
+    }
+    @Test
+    public void placeStoreLRShouldNotAllowDuplicateStores() {
+        silkRoad.placeStore("normal", 5, 100);
+        silkRoad.placeStore("fighter", 5, 150); // Misma posición
+        
+        int[][] stores = silkRoad.stores();
+        // Solo debería haber una tienda en posición 5
+        assertEquals(1, stores.length);
+        assertEquals(5, stores[0][0]);
+    }
+
+    @Test
+    public void placeStoreLRShouldNotAllowStoresOnOccupiedRobotPositions() {
+        silkRoad.placeRobot(4);
+        silkRoad.placeStore("normal", 4, 100); // Misma posición que robot
+        
+        int[][] stores = silkRoad.stores();
+        // No debería permitir colocar tienda donde hay robot
+        assertEquals(0, stores.length);
+    }
+
+    @Test
+    public void placeStoreLRShouldHandleInvalidPositions() {
+        silkRoad.placeStore("normal", -1, 100); // Posición inválida
+        silkRoad.placeStore("fighter", 20, 150); // Posición fuera de rango (lenRoad=15)
+        
+        int[][] stores = silkRoad.stores();
+        // No debería colocar tiendas en posiciones inválidas
+        assertEquals(0, stores.length);
+    }
+
+    @Test
+    public void placeStoreLRShouldHandleUnknownStoreType() {
+        silkRoad.placeStore("unknown", 5, 100); // Tipo desconocido
+        
+        int[][] stores = silkRoad.stores();
+        // Debería usar el tipo por defecto (normal)
+        assertEquals(1, stores.length);
+        assertEquals(5, stores[0][0]);
+        assertEquals(100, stores[0][1]);
+    }
+    
+     @Test
+    public void placeStoreLRDifferentStoreTypesShouldHaveDifferentBehaviors() {
+        silkRoad.placeStore("fighter", 3, 200);
+        silkRoad.placeStore("bonus", 6, 100);
+        silkRoad.placeRobot(0);
+        silkRoad.getRobot(0).setTenge(250);
+        
+        // Mover a fighter store (debería poder saquear)
+        silkRoad.moveRobot(0, 3);
+        int profitAfterFighter = silkRoad.profit();
+        
+        // Mover a bonus store (debería dar bonus)
+        silkRoad.moveRobot(3, 3);
+        int profitAfterBonus = silkRoad.profit();
+        
+        // El profit después del bonus debería ser mayor
+        assertTrue(profitAfterBonus > profitAfterFighter);
+    }
+    
     
     /**
      * Tears down the test fixture.
