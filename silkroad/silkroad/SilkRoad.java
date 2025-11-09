@@ -1022,153 +1022,75 @@ public class SilkRoad {
     }
 
 
-    public void testAsilkRoud() {
-        Scanner scanner = new Scanner(System.in);
+    public void SilkRoadATest() {
+
         makeVisible();
-        pause(1000);
+        JOptionPane.showMessageDialog(null,
+            "Inicio de prueba de aceptación\n\n" +
+            "Ruta creada con longitud: " + lenRoad,
+            "Inicio", JOptionPane.INFORMATION_MESSAGE);
     
-        // --- FASE 1: Crear tiendas de distintos tipos ---
-        System.out.println("\n🛒 Colocando tiendas de distintos tipos...");
-        //placeStore("normal", 2, 100);
-        //placeStore("autonomous", 5, 75);
-        //placeStore("fighter", 8, 50);
-        //placeStore("normal", 12, 120);
-    
-        placeStore(2, 100);
         placeStore(5, 75);
         placeStore(8, 50);
         placeStore(12, 120);
-        
-        System.out.println("\nTiendas colocadas:");
-        System.out.println("  🏪 Normal (posición 2, 100 tenges)");
-        System.out.println("  🤖 Autonomous (posición 5, 75 tenges)");
-        System.out.println("  ⚔️ Fighter (posición 8, 50 tenges)");
-        System.out.println("  🏪 Normal (posición 12, 120 tenges)");
-        pause(1500);
     
-        // --- FASE 2: Colocar robots ---
-        System.out.println("\n🤖 Colocando robots de distintos tipos...");
+        JOptionPane.showMessageDialog(null,
+            "Tiendas creadas:\n" +
+            "Normal en 2 (100 tenges)\n" +
+            "Autonomous en 5 (75 tenges)\n" +
+            "Fighter en 8 (50 tenges)\n" +
+            "Normal en 12 (120 tenges)",
+            "Tiendas", JOptionPane.INFORMATION_MESSAGE);
+    
         placeRobot(0);
         placeRobot("neverBack", 4);
         placeRobot("Tender", 10);
-        System.out.println("Robots colocados en posiciones 0 (normal), 4 (neverBack) y 10 (tender)");
-        pause(2000);
     
-        int profitInicial = profit();
-        System.out.println("\n💰 Ganancia inicial del sistema: " + profitInicial + " tenges");
-        pause(1500);
-    
-        // --- FASE 3: Movimientos manuales ---
-        System.out.println("\n🧭 Moviendo robots manualmente hacia las tiendas...");
-        pause(1000);
+        JOptionPane.showMessageDialog(null,
+            "Robots colocados:\n" +
+            "Normal en 0\n" +
+            "NeverBack en 4\n" +
+            "Tender en 10",
+            "Robots", JOptionPane.INFORMATION_MESSAGE);
     
         moveRobot(0, 2);
-        System.out.println("Robot NORMAL movido de 0 → 2 (visita tienda normal, gana 100 tenges)");
-        pause(1500);
-    
         moveRobot(4, 5);
-        System.out.println("Robot NEVERBACK movido de 4 → 5 (visita tienda autonomous, gana 75 tenges)");
-        pause(1500);
-    
         moveRobot(10, 8);
-        System.out.println("Robot TENDER movido de 10 → 8 (visita tienda fighter, toma la mitad: 25 tenges)");
-        pause(1500);
     
-        int profitDespuesManual = profit();
-        int gananciaManual = profitDespuesManual - profitInicial;
-        System.out.println("\n💹 Ganancia tras movimientos manuales: " + profitDespuesManual + " tenges");
-        System.out.println("📈 Incremento en esta fase: +" + gananciaManual + " tenges");
-        pause(2000);
-    
-        // --- FASE 4: Historial y reabastecimiento ---
-        System.out.println("\n📜 Historial de tiendas vaciadas:");
-        int[][] historial = emptiedStores();
-        for (int[] tienda : historial) {
-            System.out.println("  → Tienda pos " + tienda[0] + " vaciada " + tienda[1] + " vez(es)");
-        }
-        pause(1500);
-    
-        System.out.println("\n🔄 Reabasteciendo tiendas vacías...");
-        resupplyStores();
-        pause(1500);
-    
-        int[][] tiendasReabastecidas = stores();
-        System.out.println("Tiendas reabastecidas:");
-        for (int[] tienda : tiendasReabastecidas) {
-            System.out.println("  → Posición " + tienda[0] + ": " + tienda[1] + " tenges");
-        }
-        pause(1500);
-    
-        // --- FASE 5: Movimiento automático ---
-        System.out.println("\n⚙️ Los robots buscarán automáticamente la tienda más rentable...");
-        int profitAntesAuto = profit();
-        System.out.println("Ganancia antes del movimiento automático: " + profitAntesAuto + " tenges");
-        pause(1500);
+        int profitManual = profit();
+        JOptionPane.showMessageDialog(null,
+            "Ganancia acumulada: " + profitManual + " tenges",
+            "Movimiento manual", JOptionPane.INFORMATION_MESSAGE);
     
         moveRobots();
-        pause(2000);
+        int profitTotal = profit();
     
-        int profitDespuesAuto = profit();
-        int gananciaAuto = profitDespuesAuto - profitAntesAuto;
-        System.out.println("\n🤖 Robots movidos automáticamente.");
-        System.out.println("💰 Ganancia obtenida en esta fase: +" + gananciaAuto + " tenges");
-        System.out.println("💵 Ganancia total acumulada: " + profitDespuesAuto + " tenges");
-        pause(2000);
+        JOptionPane.showMessageDialog(null,
+            "Ganancia total acumulada: " + profitTotal + " tenges",
+            "Movimiento automático", JOptionPane.INFORMATION_MESSAGE);
     
-        // --- FASE 6: Estado final ---
-        System.out.println("\n📊 Estado final de los robots:");
-        int[][] robotsInfo = robots();
-        for (int[] robot : robotsInfo) {
-            System.out.println("  → Robot en pos " + robot[0] + " con " + robot[1] + " tenges acumulados");
+        resupplyStores();
+        JOptionPane.showMessageDialog(null,
+            "Tiendas reabastecidas correctamente.",
+            "Reabastecimiento", JOptionPane.INFORMATION_MESSAGE);
+    
+        int respuesta = JOptionPane.showConfirmDialog(null,
+            "Ganancia final: " + profitTotal + " tenges.\n\n" +
+            "¿El comportamiento observado fue el esperado?",
+            "Resultado final", JOptionPane.YES_NO_OPTION);
+    
+        if (respuesta == JOptionPane.YES_OPTION) {
+            JOptionPane.showMessageDialog(null,
+                "Prueba de aceptación aprobada por el usuario.",
+                "Resultado", JOptionPane.INFORMATION_MESSAGE);
+        } else {
+            JOptionPane.showMessageDialog(null,
+                "Prueba de aceptación rechazada por el usuario.",
+                "Resultado", JOptionPane.ERROR_MESSAGE);
         }
-        pause(1500);
-    
-        System.out.println("\n📈 Historial de ganancias por movimiento:");
-        int[][] profitsPorMov = profitPerMove();
-        for (int[] robot : profitsPorMov) {
-            System.out.print(" Robot pos " + robot[0] + " → Movimientos: [");
-            boolean primero = true;
-            for (int j = 1; j < robot.length; j++) {
-                if (robot[j] > 0) {
-                    if (!primero) System.out.print(", ");
-                    System.out.print(robot[j]);
-                    primero = false;
-                }
-            }
-            System.out.println("]");
-        }
-        pause(2000);
-    
-        // --- FASE 7: Reinicio ---
-        System.out.println("\n♻️ Reiniciando simulación...");
-        reboot();
-        pause(1500);
-        System.out.println("Sistema reiniciado correctamente.\n");
     
         makeInvisible();
-    
-        // --- FASE FINAL: ACEPTACIÓN ---
-        System.out.println("========== RESULTADO FINAL ==========");
-        System.out.println("Ganancia inicial: " + profitInicial + " tenges");
-        System.out.println("Ganancia tras movimientos manuales: " + profitDespuesManual + " tenges");
-        System.out.println("Ganancia final tras movimientos automáticos: " + profitDespuesAuto + " tenges");
-        System.out.println("Total acumulado: " + profitDespuesAuto + " tenges");
-        System.out.println("\nTiendas probadas: normal, autonomous, fighter.");
-        System.out.println("Robots probados: normal, neverBack, tender.");
-        System.out.print("\n¿El comportamiento observado y las ganancias fueron las esperadas? (sí/no): ");
-    
-        String respuesta = scanner.nextLine().trim().toLowerCase();
-        if (respuesta.equals("si") || respuesta.equals("sí")) {
-            System.out.println("\n✅ Prueba de aceptación APROBADA por el usuario.");
-        } else {
-            System.out.println("\n❌ Prueba de aceptación RECHAZADA por el usuario.");
-        }
-    
-        System.out.println("=====================================");
-        scanner.close();
     }
-
-
     
     public Store getStore(int position){
         return stores.get(position);
