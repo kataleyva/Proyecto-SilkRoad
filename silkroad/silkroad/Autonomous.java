@@ -11,34 +11,45 @@ import java.util.Random;
  */
 public class Autonomous extends Store {
     private static final Random random = new Random();
+    private int actualLocation;
     
-    public Autonomous(int[] location, int tenges, int index, int maxRoadLength) {
-        super(chooseRandomPosition(location, maxRoadLength), tenges, index);
+    public Autonomous(int[] suggestedLocation, int tenges, int index, int maxRoadLenght) {
+        super(chooseRandomPosition(suggestedLocation), tenges, index);
+        this.actualLocation=index;
         // Cambiar color para distinguir visualmente
         this.base.changeColor("orange");
         this.initialColor = "orange";
     }
-    
     /**
-     * Elige una posición aleatoria cerca de la posición sugerida
+     * Elige una posicion aleatoria cerca a la posicion sigerida
      */
-    private static int[] chooseRandomPosition(int[] suggestedLocation, int maxRoadLength) {
-        int offsetX = random.nextInt(61) - 30; // -30 a +30
-        int offsetY = random.nextInt(61) - 30; // -30 a +30
-        
-        int newX = Math.max(0, Math.min(suggestedLocation[0] + offsetX, maxRoadLength * 80 - 30));
-        int newY = Math.max(0, Math.min(suggestedLocation[1] + offsetY, maxRoadLength * 80 - 30));
-        
-        return new int[]{newX, newY};
+    private static int [] chooseRandomPosition(int[] suggestedLocation){
+        int offsetX = random.nextInt(121) - 60; 
+        int offsetY = random.nextInt(121) - 60;
+        int newX = Math.max(50, Math.min(suggestedLocation[0] + offsetX, 550));
+        int newY = Math.max(50, Math.min(suggestedLocation[1] + offsetY, 550));
+        return new int[]{newX, newY};  
+    }
+    /**
+     * Override del método attemptCollection para comportamiento específico
+     */
+    @Override
+    public int attemptCollection(int robotCurrentTenge) {
+        // AutonomousStore tiene comportamiento normal de saqueo
+        // pero podemos agregar algún mensaje o comportamiento especial
+        int collected = super.attemptCollection(robotCurrentTenge);
+        if (collected > 0) {
+            System.out.println("AutonomousStore en posición única [" + this.location[0] + "," + this.location[1] + "] fue saqueada");
+        }
+        return collected;
     }
     
     /**
-     * Override para mostrar comportamiento diferente
+     * Override para mostrar comportamiento visual diferente
      */
     @Override
     public void makeVisible() {
         super.makeVisible();
-        // Comportamiento visual adicional para tienda autónoma
         if (base != null) {
             base.changeColor("orange");
         }
