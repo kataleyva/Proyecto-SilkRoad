@@ -12,9 +12,7 @@ public class Fighter extends Store {
     
     public Fighter(int[] location, int tenges, int index) {
         super(location, tenges, index);
-        // Cambiar color para distinguir visualmente
-        this.base.changeColor("yellow");
-        this.initialColor = "yellow";
+        this.base.changeColor(247, 236, 84);
     }
     
     /**

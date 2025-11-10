@@ -12,8 +12,7 @@ public class Bonus extends Store {
     
     public Bonus(int[] location, int tenges, int index) {
         super(location, tenges, index);
-        this.base.changeColor("pink");
-        this.initialColor = "pink";
+        this.base.changeColor(245, 113, 201);
     }
 
     @Override
