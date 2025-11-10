@@ -1279,7 +1279,7 @@ public class SilkRoad {
         estadoFinal.append("ESTADO FINAL DEL SISTEMA\n\n");
         estadoFinal.append("TIENDAS REABASTECIDAS:\n");
         for (int[] store : storesInfo) {
-            estadoFinal.append("• Posición ").append(store[0])
+            estadoFinal.append("Posición ").append(store[0])
             .append(": ").append(store[1]).append(" tenges\n");
         }
         estadoFinal.append("\nROBOTS EN POSICIONES INICIALES:\n");

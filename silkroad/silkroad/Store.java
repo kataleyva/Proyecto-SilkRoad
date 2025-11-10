@@ -76,7 +76,7 @@ public class Store {
             if (tenge <= 0) {
                 base.changeColor("gray");
             } else {
-                base.changeColor(initialColor);
+                base.changeColor(196,113,245);
             }
         }
     }
