@@ -16,9 +16,7 @@ public class Autonomous extends Store {
     public Autonomous(int[] suggestedLocation, int tenges, int index, int maxRoadLenght) {
         super(chooseRandomPosition(suggestedLocation), tenges, index);
         this.actualLocation=index;
-        // Cambiar color para distinguir visualmente
-        this.base.changeColor("orange");
-        this.initialColor = "orange";
+        this.base.changeColor(247, 172, 42);
     }
     /**
      * Choose a random position close to the suggested position

@@ -12,10 +12,7 @@ public class Fighter extends Store {
     
     public Fighter(int[] location, int tenges, int index) {
         super(location, tenges, index);
-        this.tengesStoreF = tenges; // Solo robots con más tenges pueden saquear
-        // Cambiar color para distinguir visualmente
-        this.base.changeColor("yellow");
-        this.initialColor = "yellow";
+        this.base.changeColor(247, 236, 84);
     }
     
     /**
@@ -24,7 +21,7 @@ public class Fighter extends Store {
      * @return true si el robot puede saquear, false si no cumple el requisito
      */
     public boolean canBeLootedBy(int robotTenge) {
-        return robotTenge > this.tengesStoreF;
+        return robotTenge > this.tenge;
     }
     
     /**
@@ -40,9 +37,7 @@ public class Fighter extends Store {
             this.incrementTimesEmpty();
             updateVisualState();
             return collected;
-        } else if (this.tenge>0){
-            return 0;
-        }
+        } 
         return 0;
     }
 
