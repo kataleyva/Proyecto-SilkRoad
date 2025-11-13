@@ -996,4 +996,29 @@ public class SilkRoad {
     public Store getStore(int position){
         return stores.get(position);
     }
+    
+    public int getLength(){
+        return this.lenRoad;
+    }
+    
+    public int getNumberOfRobots(){
+        return robots.size();
+    }
+    
+    public int getNumberOfStores(){
+        return stores.size();
+    }
+    
+    public int getStoreAmount(int position){
+        if (stores.get(position) != null ) { 
+            return stores.get(position).getTenge();    
+        } else {
+            if (isVisible){
+                showMessage("No existe una tienda en esa posición");
+            }
+            return 0;
+        }
+    }
+    
+    
 }
