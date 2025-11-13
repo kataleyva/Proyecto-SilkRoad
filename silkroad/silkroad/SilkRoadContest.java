@@ -65,7 +65,9 @@ public class SilkRoadContest {
             }
             results[i] = calculateProfitWithSimulator(robots, stores);
         }
-        ShowResults(results);
+        if  (simulator.getVisibility()){
+            ShowResults(results);
+        }
         return results;
     }
     
@@ -146,13 +148,17 @@ public class SilkRoadContest {
         simulator.makeVisible();
         int[] ganancias = new int[days.length];
         for (int i = 0; i < days.length; i++) {
-            showMessage(" DÍA " + (i + 1) );
-            // PASO 1: Reabastecer y retornar (excepto día 1)
+            if (simulator.getVisibility()){
+                showMessage(" DÍA " + (i + 1) );
+            }
+
             if (i > 0) {
                 simulator.resupplyStores();
                 simulator.returnRobots();
                 resetRobotProfits();
-                showMessage("Juego y Ganancias reiniciadas.");
+                if (simulator.getVisibility()){
+                    showMessage("Juego y Ganancias reiniciadas.");
+                }
             }
             
             if (slow) simulator.pause(800);
@@ -171,7 +177,9 @@ public class SilkRoadContest {
             showCurrentStatus();
             if (slow) simulator.pause(1000);
             // PASO 4: Mover robots
-            showMessage("Moviendo robots");
+            if (simulator.getVisibility()){
+                showMessage("Moviendo robots");
+            }
             simulator.moveRobots();
             if (slow) simulator.pause(1500);
             // PASO 5: Calcular ganancia
@@ -243,33 +251,6 @@ public class SilkRoadContest {
         JOptionPane.showMessageDialog(null, message, "Silk Road Simulator", 
                                         JOptionPane.INFORMATION_MESSAGE);
     }
-    
-    //Pruebas de aceptación 
-    public void testAceptacion0() {
-        // Expected Output: 0, 10, 35, 50, 50, 60
-        int[][] sampleInput1 = {
-            {1, 20},        // Día 1: Robot en 20
-            {2, 15, 15},    // Día 2: Tienda en 15 con 15 tenges
-            {2, 40, 50},    // Día 3: Tienda en 40 con 50 tenges
-            {1, 50},        // Día 4: Robot en 50
-            {2, 80, 20},    // Día 5: Tienda en 80 con 20 tenges
-            {2, 70, 30}     // Día 6: Tienda en 70 con 30 tenges
-        };
-        simulate(sampleInput1, true);
-    }
-    
-    public void testAceptacion1() {
 
-        int[][] sampleInput1 = {
-            {1, 10},        // Día 1: Robot en 20
-            {2, 5, 15},     // Día 2: Tienda en 15 con 15 tenges
-            {1, 20},        //
-            {2, 14, 50}, 
-            {1, 6},         // Día 3: Tienda en 40 con 50 tenges// Día 4: Robot en 50
-            {2, 4, 20},     // Día 5: Tienda en 80 con 20 tenges
-            {2, 11, 30}     // Día 6: Tienda en 70 con 30 tenges
-        };
-        simulate(sampleInput1, true);
-    }
 }
     

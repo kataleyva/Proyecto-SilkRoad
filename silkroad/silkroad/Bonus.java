@@ -30,8 +30,5 @@ public class Bonus extends Store {
     @Override
     public void makeVisible() {
         super.makeVisible();
-        if (base != null) {
-            base.changeColor("pink");
-        }
     }
 }

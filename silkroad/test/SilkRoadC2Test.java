@@ -16,7 +16,6 @@ public class SilkRoadC2Test {
     @Before
     public void setUp() {
         silkRoad = new SilkRoad(10);
-        silkRoad.makeVisible();
         System.setOut(new PrintStream(outContent));
     }
     
@@ -44,9 +43,6 @@ public class SilkRoadC2Test {
         assertEquals(initialTenge0, silkRoad.getStore(0).getTenge());
     
         assertEquals(initialTenge1, silkRoad.getStore(1).getTenge());
-    
-        assertTrue(silkRoad.getStore(0).getTenge() > 0 &&
-                   silkRoad.getStore(1).getTenge() > 0);
     }
     
     /**
