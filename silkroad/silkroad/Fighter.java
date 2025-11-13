@@ -56,10 +56,5 @@ public class Fighter extends Store {
     @Override
     public void makeVisible() {
         super.makeVisible();
-        if (base != null) {
-            base.changeColor("yellow");
-        }
     }
-    
-
 }

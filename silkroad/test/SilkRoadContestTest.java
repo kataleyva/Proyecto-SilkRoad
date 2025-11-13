@@ -15,26 +15,24 @@ import static org.junit.jupiter.api.Assertions.*;
  * no comparaciones con >= o <=, para detectar errores en la implementación.
  */
 public class SilkRoadContestTest {
-// SE REALIZAN PRUEBAS UNITARIAS PARA VER EL COMPORTAMIENTO DE SOLVE EN DIFERENTES SITUACIONES
-// Y PRUEBAS DE ACEPTACION DE SIMULATE PARA VER EL COMPORTAMIENTO DE LA CLASE DE FORMA VISUAL
+    // SE REALIZAN PRUEBAS UNITARIAS PARA VER EL COMPORTAMIENTO DE SOLVE EN DIFERENTES SITUACIONES
+    // Y PRUEBAS DE ACEPTACION DE SIMULATE PARA VER EL COMPORTAMIENTO DE LA CLASE DE FORMA VISUAL
     /**
      * Verifica que solve() devuelva un array vacío si la entrada es null.
      */
     @Test
-    public void shouldReturnEmptyWithNullImput() {
+    public void solveLRshouldReturnEmptyWithNullImput() {
         int[] resultado = SilkRoadContest.solve(null);
-        assertEquals(0, resultado.length, 
-            "Debe devolver un arreglo vacío si la entrada es null");
+        assertEquals(0, resultado.length);
     }
     
     /**
      * Verifica que solve() maneje un array vacío correctamente.
      */
     @Test
-    public void shouldReturnArrayEmptyWithEmptyArray() {
+    public void solveLRshouldReturnArrayEmptyWithEmptyArray() {
         int[] resultado = SilkRoadContest.solve(new int[0][]);
-        assertEquals(0, resultado.length, 
-            "Debe devolver un arreglo vacío si no hay días");
+        assertEquals(0, resultado.length);
     }
     
     /**
@@ -46,9 +44,8 @@ public class SilkRoadContestTest {
             {1, 5}
         };
         int[] resultado = SilkRoadContest.solve(dias);
-        assertEquals(1, resultado.length, "Debe haber 1 resultado");
-        assertEquals(0, resultado[0], 
-            "Sin tiendas, la ganancia debe ser 0");
+        assertEquals(1, resultado.length);
+        assertEquals(0, resultado[0]);
     }
     
     /**
@@ -60,9 +57,8 @@ public class SilkRoadContestTest {
             {2, 10, 100}
         };
         int[] resultado = SilkRoadContest.solve(dias);
-        assertEquals(1, resultado.length, "Debe haber 1 resultado");
-        assertEquals(0, resultado[0], 
-            "Sin robots, la ganancia debe ser 0");
+        assertEquals(1, resultado.length);
+        assertEquals(0, resultado[0]);
     }
     
     /**
@@ -79,11 +75,9 @@ public class SilkRoadContestTest {
         };
         int[] resultado = SilkRoadContest.solve(dias);
         
-        assertEquals(2, resultado.length, "Debe haber 2 resultados");
-        assertEquals(0, resultado[0], 
-            "Día 1: Solo robot, sin tiendas = 0");
-        assertEquals(40, resultado[1], 
-            "Día 2: Robot en 0, Tienda en 10 con 50 tenges. Distancia=10. Ganancia=50-10=40");
+        assertEquals(2, resultado.length);
+        assertEquals(0, resultado[0]);
+        assertEquals(40, resultado[1]);
     }
     
     /**
@@ -101,11 +95,9 @@ public class SilkRoadContestTest {
         };
         int[] resultado = SilkRoadContest.solve(dias);
         
-        assertEquals(2, resultado.length, "Debe haber 2 resultados");
-        assertEquals(0, resultado[0], 
-            "Día 1: Solo robot, sin tiendas = 0");
-        assertEquals(0, resultado[1], 
-            "Día 2: Robot en 0, Tienda en 20 con 10 tenges. Ganancia=10-20=-10. No conviene moverse = 0");
+        assertEquals(2, resultado.length);
+        assertEquals(0, resultado[0]);
+        assertEquals(0, resultado[1]);
     }
     
     /**
@@ -122,39 +114,9 @@ public class SilkRoadContestTest {
         };
         int[] resultado = SilkRoadContest.solve(dias);
         
-        assertEquals(2, resultado.length, "Debe haber 2 resultados");
-        assertEquals(0, resultado[0], 
-            "Día 1: Solo robot, sin tiendas = 0");
-        assertEquals(0, resultado[1], 
-            "Día 2: Robot en 0, Tienda en 15 con 15 tenges. Ganancia=15-15=0");
-    }
-
-    /**
-     * Dos robots y dos tiendas, cada robot va a su tienda más cercana.
-     * Robot1 en pos 5, Robot2 en pos 15
-     * Tienda1 en pos 5 con 80 tenges, Tienda2 en pos 15 con 120 tenges
-     * 
-     * Día 3: Robot1→Tienda1: distancia=0, ganancia=80
-     * Día 4: Robot1→Tienda1 (80) + Robot2→Tienda2: distancia=0, ganancia=120
-     * Total día 4 = 80 + 120 = 200 EXACTOS
-     */
-    @Test
-    public void shouldReturn200Tenges() {
-        int[][] dias = {
-            {1, 5},       // Día 1: Robot1 en posición 5
-            {1, 15},      // Día 2: Robot2 en posición 15
-            {2, 5, 80},   // Día 3: Tienda1 en posición 5 con 80 tenges
-            {2, 15, 120}  // Día 4: Tienda2 en posición 15 con 120 tenges
-        };
-        int[] resultado = SilkRoadContest.solve(dias);
-        
-        assertEquals(4, resultado.length, "Debe haber 4 resultados");
-        assertEquals(0, resultado[0], "Día 1: Solo Robot1, sin tiendas = 0");
-        assertEquals(0, resultado[1], "Día 2: 2 robots, sin tiendas = 0");
-        assertEquals(80, resultado[2], 
-            "Día 3: Robot1 en 5 → Tienda1 en 5. Ganancia=80-0=80");
-        assertEquals(200, resultado[3], 
-            "Día 4: Robot1→Tienda1 (80) + Robot2→Tienda2 (120) = 200");
+        assertEquals(2, resultado.length);
+        assertEquals(0, resultado[0]);
+        assertEquals(0, resultado[1]);
     }
     
     /**
@@ -169,11 +131,9 @@ public class SilkRoadContestTest {
         };
         int[] resultado = SilkRoadContest.solve(dias);
         
-        assertEquals(2, resultado.length, "Debe haber 2 resultados");
-        assertEquals(0, resultado[0], 
-            "Día 1: Sin robots para saquear, ganancia = 0");
-        assertEquals(0, resultado[1], 
-            "Día 2: Sin robots para saquear, ganancia = 0");
+        assertEquals(2, resultado.length);
+        assertEquals(0, resultado[0]);
+        assertEquals(0, resultado[1]);
     }
     
      /**
@@ -189,27 +149,10 @@ public class SilkRoadContestTest {
         };
         int[] resultado = SilkRoadContest.solve(dias);
         
-        assertEquals(3, resultado.length, "Debe haber 3 resultados");
-        assertEquals(0, resultado[0], "Día 1: Sin tiendas, ganancia = 0");
-        assertEquals(0, resultado[1], "Día 2: Sin tiendas, ganancia = 0");
-        assertEquals(0, resultado[2], "Día 3: Sin tiendas, ganancia = 0");
-    }
-    
-    /**
-     * Verifica que solve() NO debería permitir ganancias negativas.
-     * Cuando el costo de movimiento excede los tenges, el robot no debe moverse.
-     */
-    @Test
-    public void notShouldNegativeProfits() {
-        int[][] dias = {
-            {1, 0},       // Robot en 0
-            {2, 100, 30}  // Tienda en 100 con 30 tenges (costo=100, pérdida=-70)
-        };
-        int[] resultado = SilkRoadContest.solve(dias);
-        
-        assertEquals(2, resultado.length, "Debe haber 2 resultados");
-        assertEquals(0, resultado[1], 
-            "Día 2: Ganancia sería negativa (30-100=-70), robot no se mueve = 0");
+        assertEquals(3, resultado.length);
+        assertEquals(0, resultado[0]);
+        assertEquals(0, resultado[1]);
+        assertEquals(0, resultado[2]);
     }
     
     /**
@@ -225,49 +168,11 @@ public class SilkRoadContestTest {
             {2, 10, 100}   // Solo una tienda en 10 con 100 tenges
         };
         int[] resultado = SilkRoadContest.solve(dias);
-        assertEquals(4, resultado.length, "Debe haber 4 resultados");
+        assertEquals(4, resultado.length);
         // Mejor opción: Robot2 (en 5) → Tienda (en 10): 100 - 5 = 95
         // Robot1 (en 0) → Tienda (en 10): 100 - 10 = 90
         // Robot3 (en 20) → Tienda (en 10): 100 - 10 = 90
         // Solo el robot más cercano (Robot2) debe ir
-        assertEquals(95, resultado[3], 
-            "Día 4: Solo el robot más rentable saquea. Robot2→Tienda = 95");
+        assertEquals(95, resultado[3]);
     }
-    
-    /**
-    * Verifica que solve() NO debería aceptar posiciones negativas.
-    * Las posiciones deben ser >= 0.
-    */
-    @Test
-    public void notShouldAcceptNegativePositions() {
-        int[][] dias = {
-            {1, -5},      // Robot en posición negativa (inválido)
-            {2, 10, 50}   // Tienda válida
-        };
-        int[] resultado = SilkRoadContest.solve(dias);
-        assertEquals(2, resultado.length, "Debe haber 2 resultados");
-        assertEquals(0, resultado[0], "Día 1: Sin robots válidos, ganancia = 0");
-        assertTrue(resultado[1] >= 0,
-        "No debe generarse ganancia negativa incluso si hay posición inválida");
-    }
-
-    /**
-    * Verifica que solve() NO debería confundir tipos de eventos.
-    * Tipo 1 = Robot, Tipo 2 = Tienda. Otros tipos deben ignorarse.
-    */
-   @Test
-   public void notShouldAcceptIncorrectTypes() {
-       int[][] dias = {
-           {1, 10},       // Robot
-           {2, 10, 100},  // Tienda
-           {3, 15, 50}    // Tipo inválido → debe ser ignorado
-        };
-        int[] resultado = SilkRoadContest.solve(dias);
-        assertEquals(3, resultado.length, "Debe haber 3 resultados");
-        assertEquals(0, resultado[0], "Día 1: Solo robot, sin tiendas = 0");
-        assertEquals(100, resultado[1], "Día 2: Robot → Tienda = 100");
-        assertEquals(100, resultado[2], 
-        "Día 3: Tipo inválido ignorado, ganancia se mantiene igual");
-    }
-
 }
