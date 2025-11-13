@@ -2,6 +2,7 @@ package silkroad;
 import shapes.Rectangle;
 import shapes.Circle;
 import shapes.Line;
+import shapes.ProgressBar;
 import java.util.HashMap;
 import java.util.ArrayList;
 import java.util.Map;
@@ -26,6 +27,9 @@ public class SilkRoad {
     private int[][] posicion;
     private static boolean isVisible;
     private ArrayList<Line> lineasCamino;
+    private ProgressBar profitBar;
+    private int maxPossibleProfit;
+    private static final int MAX_ROAD_LENGTH = 50;
 
     /**
      * Constructor de la clase SilkRoad.
@@ -35,7 +39,11 @@ public class SilkRoad {
      * @param lengthRoad Longitud de la ruta de seda. Debe ser mayor a 0.
      */
     public SilkRoad(int lengthRoad) {
-        if (lengthRoad < 0 || lengthRoad == 0){
+        if (lengthRoad>MAX_ROAD_LENGTH){
+            System.out.println("Longitud de ruta limitada a " + MAX_ROAD_LENGTH);
+            lengthRoad = MAX_ROAD_LENGTH;
+        }
+        if (lengthRoad < 0){
             this.lenRoad = 0;
             this.stores = new HashMap<>();
             this.robots = new ArrayList<>();
@@ -51,6 +59,14 @@ public class SilkRoad {
             this.lineasCamino = new ArrayList<>();  
             crearCaminoVisual();
         }
+        this.maxPossibleProfit = Math.max(100,calculateMaxPossibleProfit());
+        //this.maxPossibleProfit = calculateMaxPossibleProfit();
+        this.profitBar = new ProgressBar(220,30,maxPossibleProfit);
+        if (isVisible){
+            profitBar.makeVisible();
+            updateProfitBar();
+        }
+
     }
     
     private void crearCaminoVisual() {
@@ -92,6 +108,8 @@ public class SilkRoad {
             this.posicion = new int[0][0];
             this.isVisible = false;
             this.lineasCamino = new ArrayList<>();
+            this.maxPossibleProfit = 100;
+            this.profitBar = new ProgressBar(200,20,maxPossibleProfit);
             return;
         }
         int maxPosition = 0;
@@ -103,6 +121,11 @@ public class SilkRoad {
                     maxPosition = position;
                 }
             }
+        }
+        int calculatedLength = maxPosition + 1;
+        if(calculatedLength > MAX_ROAD_LENGTH){
+            System.out.println("La longitud calculada " + calculatedLength + "excede el maximo, limitando a " + MAX_ROAD_LENGTH);
+            calculatedLength = MAX_ROAD_LENGTH;
         }
         this.lenRoad = maxPosition + 1;
         this.stores = new HashMap<>();
@@ -116,6 +139,47 @@ public class SilkRoad {
         for (int[] day : days) {
             procesarDia(day);
         }
+        this.maxPossibleProfit = calculateMaxPossibleProfit();
+        this.profitBar = new ProgressBar(200,20,maxPossibleProfit);
+        if (isVisible){
+            profitBar.makeVisible();
+        }
+    }
+    
+    /**
+     * Actualiza la barra de progreso de Shapes con la ganancia actual
+     */
+    private void updateProfitBar(){
+        if(profitBar!= null){
+            int currentProfit = profit();
+            if (maxPossibleProfit <= 0){
+                maxPossibleProfit = Math.max(1,calculateMaxPossibleProfit());
+                profitBar.setMaxValue(maxPossibleProfit);
+            }
+            profitBar.updateValue(currentProfit);
+            if (currentProfit<0){
+                profitBar.changeProgressColor("red"); //Perdidas
+            } else if (currentProfit < maxPossibleProfit*0.5){
+                profitBar.changeProgressColor("yellow");// Ganancias bajas
+            } else {
+                profitBar.changeProgressColor("green");//Ganancias altas
+            }
+            if (isVisible){
+                profitBar.erase();
+                profitBar.draw();
+             }
+        }
+    }
+    
+    /**
+     * Calcula la ganancia maxima posible segun las tiendas existenges
+     */
+    private int calculateMaxPossibleProfit(){
+        int maxProfit = 0;
+        for(Store store: stores.values()){
+            maxProfit+= store.getInitialTenge();
+        }
+        return Math.max(100,maxProfit);
     }
 
     /**
@@ -169,6 +233,12 @@ public class SilkRoad {
                 store.makeVisible();
             }
         }
+        this.maxPossibleProfit = calculateMaxPossibleProfit();
+        if(profitBar!=null){
+            profitBar.setMaxValue(maxPossibleProfit);
+            updateProfitBar();
+            
+        }
     }
     /**
      *Place a specific type of store on the route
@@ -210,7 +280,11 @@ public class SilkRoad {
         if (isVisible){
             store.makeVisible();
         }
-            
+        this.maxPossibleProfit = calculateMaxPossibleProfit();
+        if(profitBar!=null){
+            profitBar.setMaxValue(maxPossibleProfit);
+            updateProfitBar();
+        }
     }
     /**
      * Metodo auxiliar para encontrar una ubicacion cerca disponible
@@ -242,6 +316,7 @@ public class SilkRoad {
         if (store != null) {
             store.makeInvisible();
             stores.remove(location);
+            updateProfitBar();
         } else {
             showMessage("No hay tienda en la posición " + location);
         }
@@ -417,6 +492,7 @@ public class SilkRoad {
     int gananciaNeta = collectedTenges - distance;
     robot.setTenge(robot.getTenge() + gananciaNeta);
     robot.addProfitsInMovements(gananciaNeta);
+    updateProfitBar();
     }
 
     /**
@@ -446,6 +522,7 @@ public class SilkRoad {
         robot.setTenge(robot.getTenge() + gananciaNeta);
         
         robot.addProfitsInMovements(gananciaNeta);
+        updateProfitBar();
     }
     
     /**
@@ -478,6 +555,7 @@ public class SilkRoad {
         robot.setTenge(robot.getTenge() + gananciaNeta);
         
         robot.addProfitsInMovements(gananciaNeta);
+        updateProfitBar();
     }
     
     /**
@@ -538,6 +616,7 @@ public class SilkRoad {
             robot.setTenge(robot.getTenge() + gananciaRobot);
             robot.addProfitsInMovements(gananciaRobot);
         }
+        updateProfitBar();
     }
 
     /**
@@ -751,6 +830,7 @@ public class SilkRoad {
         for (Robot robot : robots) {
             robot.resetProfits();
         }
+        updateProfitBar();
     }
 
     /**
@@ -865,6 +945,10 @@ public class SilkRoad {
         for (Robot robot : robots){
             robot.makeVisible();
         }
+        if (profitBar!=null){
+            profitBar.makeVisible();
+            updateProfitBar();
+        }
     }
 
     /**
@@ -886,6 +970,9 @@ public class SilkRoad {
         
         for (Robot robot : robots){
             robot.makeInvisible();
+        }
+        if (profitBar!=null){
+            profitBar.makeInvisible();
         }
     }
 
@@ -1222,7 +1309,7 @@ public class SilkRoad {
         }
         estadoFinal.append("\nROBOTS EN POSICIONES INICIALES:\n");
         for (int[] robot : robotsInfo) {
-            estadoFinal.append("• Posición ").append(robot[0])
+            estadoFinal.append("Posición ").append(robot[0])
             .append(": ").append(robot[1]).append(" tenges acumulados\n");
         }
         estadoFinal.append("\nGanancia total final: ").append(profitAutomatico).append(" tenges");
