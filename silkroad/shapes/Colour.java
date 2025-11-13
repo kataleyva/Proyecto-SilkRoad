@@ -17,8 +17,7 @@ public class Colour {
             b = random.nextInt(256);
             color = "rgb(" + r + "," + g + "," + b + ")";
         } while (colorsUsed.contains(color) || color.equals(excludedColor) || !(r != 67 && g != 100 && b != 204) || !(r != 67 && g != 204 && b != 76)
-        || !(r != 247 && g != 172 && b != 42) || !(r != 247 && g != 236 && b != 84) || !(r != 245 && g != 113 && b != 201)
-        || !(r != 196 && g != 113 && b != 245) );
+        || !(r != 247 && g != 172 && b != 42) || !(r != 247 && g != 236 && b != 84) || !(r != 245 && g != 113 && b != 201));
         colorsUsed.add(color);
         return color;
     }

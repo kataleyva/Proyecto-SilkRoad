@@ -10,7 +10,6 @@ import javax.swing.JOptionPane;
 import java.util.List;
 import java.util.*;
 
-
 /**
  * Clase que representa el simulador de la Ruta de la Seda.
  * 
@@ -61,7 +60,7 @@ public class SilkRoad {
                 posicion[i+1][0], posicion[i+1][1]
             );
             lineasCamino.add(linea);
-            //pruebas
+
             if (isVisible){
                 linea.makeVisible();
             }
@@ -160,9 +159,13 @@ public class SilkRoad {
      */
     public void placeStore(int location, int tenges){
         if (stores.get(location) != null){
-            showMessage("No se puede insertar una tienda sobre una ya existente.");
+            if (isVisible){
+                showMessage("No se puede insertar una tienda sobre una ya existente.");
+            }
         }else if(getFirstRobotAtLocation(location) != null){
-            showMessage("No se puede insertar una tienda sobre un robot ya existente.");
+            if (isVisible){
+                showMessage("No se puede insertar una tienda sobre un robot ya existente.");
+            }
         }else{
             Store store = new Store(this.posicion[location], tenges, location);
             stores.put(location, store);
@@ -171,6 +174,7 @@ public class SilkRoad {
             }
         }
     }
+    
     /**
      *Place a specific type of store on the route
      *@param type  Tipo de tienda("autonomus","fighter","bonus" o "normal"
@@ -208,11 +212,13 @@ public class SilkRoad {
                 break;
         }
         stores.put(location,store);
+        
         if (isVisible){
             store.makeVisible();
         }
             
     }
+    
     /**
      * Metodo auxiliar para encontrar una ubicacion cerca disponible
      * para la tienda autonomous
@@ -231,6 +237,7 @@ public class SilkRoad {
         }
         return suggestedLocation;
     }
+    
     /**
      * 
      * Elimina una tienda de la ruta en una ubicación específica.
@@ -244,9 +251,12 @@ public class SilkRoad {
             store.makeInvisible();
             stores.remove(location);
         } else {
-            showMessage("No hay tienda en la posición " + location);
+            if (isVisible){
+                showMessage("No hay tienda en la posición " + location);
+            }
         }
     }
+    
     /**
      * Coloca un robot en la ruta en una ubicación específica.
      * Si ya existe un robot en esa ubicación, muestra un mensaje de error.
@@ -317,7 +327,9 @@ public class SilkRoad {
             robot.removeRobot();
             robots.remove(robot);
         } else {
-            showMessage("No hay robots en la posición indicada.");
+            if (isVisible){
+                showMessage("No hay robots en la posición indicada.");
+            }
         }
     }
     
@@ -367,13 +379,17 @@ public class SilkRoad {
          
         Robot robot = getFirstRobotAtLocation(location);
         if (robot == null) {
-            showMessage("No hay robot en la posición " + location);
+            if (isVisible){
+                showMessage("No hay robot en la posición " + location);
+            }
             return;
         }
 
         int newLocation = location + meters;
         if (newLocation < 0 || newLocation >= lenRoad) {
-            showMessage("Movimiento inválido: posición " + newLocation + " fuera de rango");
+            if (isVisible){
+                showMessage("Movimiento inválido: posición " + newLocation + " fuera de rango");
+            }
             return;
         }
         
@@ -382,7 +398,10 @@ public class SilkRoad {
         } else {
             moveTenderRobot(robot, location, meters);
         }
+        
+        getRobotHighestProfits();
     }
+    
     /**
      * Mueve el robot usando el sistema de attemptCollection para cumplir con el comportamiento
      * y reglas de Fighter
@@ -394,13 +413,17 @@ public class SilkRoad {
      
     Robot robot = getFirstRobotAtLocation(location);
     if (robot == null) {
-        showMessage("No hay robot en la posición " + location);
+        if (isVisible){
+            showMessage("No hay robot en la posición " + location);
+        }
         return;
     }
 
     int newLocation = location + meters;
     if (newLocation < 0 || newLocation >= lenRoad) {
-        showMessage("Movimiento inválido: posición " + newLocation + " fuera de rango");
+        if (isVisible){
+            showMessage("Movimiento inválido: posición " + newLocation + " fuera de rango");
+        }
         return;
     }
      
@@ -486,7 +509,9 @@ public class SilkRoad {
      */
     public void moveRobots() {
         if (robots.isEmpty()) {
-            showMessage("No hay robots para mover");
+            if (isVisible){
+                showMessage("No hay robots para mover");
+            }
             return;
         }
         
@@ -539,6 +564,8 @@ public class SilkRoad {
             robot.setTenge(robot.getTenge() + gananciaRobot);
             robot.addProfitsInMovements(gananciaRobot);
         }
+        
+        getRobotHighestProfits();
     }
 
     /**
@@ -654,6 +681,7 @@ public class SilkRoad {
                 robot.resetRobotLocation();
             }
         }
+        getRobotHighestProfits();
     }
 
     /**
@@ -684,7 +712,9 @@ public class SilkRoad {
      * Permite consultar las ganancias que ha logrado cada robot en cada movimiento
      */
     private void showRobotProfits(Robot r){
-        showMessage("El robot ha recolectado hasta este punto: " + r.getTenge());
+        if (isVisible){
+            showMessage("El robot ha recolectado hasta este punto: " + r.getTenge());
+        }
     }
     
     /**
@@ -714,32 +744,21 @@ public class SilkRoad {
         if (indices.size() != 1) return;
     
         Robot rb = robs.get(indices.get(0));
-        for (int j = 0; j < 2; j++) {
-            rb.makeInvisible();
-            pause(1500);
-            rb.makeVisible();
+        if (isVisible){
+            for (int j = 0; j < 3; j++) {
+                rb.makeInvisible();
+                pause(1000);
+                rb.makeVisible();
+            }
         }
     }
-
-    /**
-     * Ejecutar constantemente el programa.
+    
+    /** 
+     * Método que muestra el robot con mayor beneficio en cada movimiento
      */
-    //Código generado por IA para poder visualizar constantemente el robot con mayor beneficio dado que no sabíamos cómo ejecutarlo.
-    private void startRobotProfitMonitor() {
-        Thread monitorThread = new Thread(() -> {
-            while (true) {
-                try {
-                    getRobotHighestProfits();
-                    Thread.sleep(3000); // cada 3 segundos
-                } catch (InterruptedException e) {
-                    break; // sale del hilo si se interrumpe
-                }
-            }
-        });
-        monitorThread.setDaemon(true); // no bloquea la finalización del programa
-        monitorThread.start();
+    private void showRobotHighestProfit(){
+        getRobotHighestProfits();
     }
-
 
     /**
      * Reinicia la simulación de la Ruta de la Seda.
@@ -958,365 +977,6 @@ public class SilkRoad {
                                         JOptionPane.INFORMATION_MESSAGE);
     }
     
-    //Pruebas de aceptacion
-    /**
-     * Prueba de aceptación visual para la clase SilkRoad.
-     * 
-     * Crea una simulación con tiendas y robots, los mueve y reinicia,
-     */
-    public void testAceptacion() {
-        System.out.println(" INICIO PRUEBA DE ACEPTACIÓN DE SILKROAD ");
-        SilkRoad simulador = new SilkRoad(10);
-        simulador.makeVisible();
-        System.out.println("Ruta creada con longitud 10.");
-        simulador.placeStore(2, 40);
-        simulador.placeStore(5, 80);
-        simulador.placeStore(8, 30);
-        System.out.println("Tiendas colocadas en posiciones 2, 5 y 8.");
-        simulador.placeRobot(0);
-        simulador.placeRobot(3);
-        System.out.println("Robots colocados en posiciones 0 y 3.");
-    
-        pause(1500);
-        System.out.println("Moviendo robots manualmente...");
-        simulador.moveRobot(0, 2); 
-        pause(1500);
-        simulador.moveRobot(3, 2); 
-        pause(1500);
-        System.out.println("Ganancia total hasta ahora: " + simulador.profit());
-        simulador.resupplyStores();
-        System.out.println("Tiendas reabastecidas.");
-        pause(1500);
-    
-        System.out.println("Moviendo robots automáticamente (buscando la tienda más rentable)...");
-        simulador.moveRobots();
-        pause(2000);
-        System.out.println("Ganancia total tras movimiento automático: " + simulador.profit());
-    
-        System.out.println("Reiniciando simulación...");
-        simulador.reboot();
-        pause(2000);
-    
-        simulador.makeInvisible();
-        System.out.println("FIN DE PRUEBA DE ACEPTACIÓN");
-    }
-
-    /**
-     * Prueba de aceptación completa que demuestra el ciclo completo del simulador
-     * con visualización gráfica y mensajes en consola.
-     */
-    public void testAceptacion2() {
-        
-        makeVisible();
-        System.out.println(" Ruta creada con longitud " + lenRoad);
-        System.out.println(" Visualización activada");
-        pause(1000);
-
-        placeStore(2, 100);
-        placeStore(5, 75);
-        placeStore(8, 50);
-        placeStore(12, 120);
-        System.out.println("\n Tiendas colocadas:");
-        System.out.println("  - Posición 2: 100 tenges");
-        System.out.println("  - Posición 5: 75 tenges");
-        System.out.println("  - Posición 8: 50 tenges");
-        System.out.println("  - Posición 12: 120 tenges");
-        pause(1500);
-        
-        placeRobot(0);
-        placeRobot(4);
-        placeRobot(10);
-        System.out.println("\nobots colocados en posiciones 0, 4 y 10");
-        pause(2000);
-
-        System.out.println("Los robots se moverán manualmente a las tiendas...");
-        pause(1000);
-        
-        moveRobot(0, 2);
-        System.out.println("Robot movido de posición 0 a 2 (recolecta 100 tenges)");
-        pause(1500);
-        
-        moveRobot(4, 1);
-        System.out.println("Robot movido de posición 4 a 5 (recolecta 75 tenges)");
-        pause(1500);
-        
-        moveRobot(10, 2);
-        System.out.println("Robot movido de posición 10 a 12 (recolecta 120 tenges)");
-        pause(1500);
-        
-        int gananciaFase1 = profit();
-        System.out.println("\nGanancia después de movimientos manuales: " + gananciaFase1 + " tenges");
-        pause(2000);
-
-        int[][] historial = emptiedStores();
-        System.out.println("Consultando historial de tiendas...");
-        for (int i = 0; i < historial.length; i++) {
-            System.out.println("  → Tienda posición " + historial[i][0] + 
-                             ": vaciada " + historial[i][1] + " vez(es)");
-        }
-        pause(2000);
-
-        System.out.println("Reabasteciendo tiendas vacías...");
-        resupplyStores();
-        pause(1500);
-        
-        int[][] tiendasReabastecidas = stores();
-        System.out.println("Tiendas reabastecidas:");
-        for (int i = 0; i < tiendasReabastecidas.length; i++) {
-            System.out.println("  → Posición " + tiendasReabastecidas[i][0] + 
-                             ": " + tiendasReabastecidas[i][1] + " tenges");
-        }
-        pause(2000);
-
-        System.out.println("Los robots buscarán automáticamente la tienda más rentable...");
-        int profitAntes = profit();
-        System.out.println("Ganancia antes del movimiento: " + profitAntes + " tenges");
-        pause(1500);
-        
-        moveRobots();
-        pause(2000);
-        
-        int profitDespues = profit();
-        int gananciaObtenida = profitDespues - profitAntes;
-        System.out.println("Robots movidos automáticamente");
-        System.out.println("Ganancia obtenida en esta fase: " + gananciaObtenida + " tenges");
-        System.out.println("Ganancia total acumulada: " + profitDespues + " tenges");
-        pause(2000);
-        
-        int[][] robotsInfo = robots();
-        for (int i = 0; i < robotsInfo.length; i++) {
-            System.out.println("  → Robot en posición " + robotsInfo[i][0] + 
-                             " con " + robotsInfo[i][1] + " tenges acumulados");
-        }
-        pause(2000);
-        
-        int[][] profitsPorMov = profitPerMove();
-        for (int i = 0; i < profitsPorMov.length; i++) {
-            System.out.print(" Robot pos " + profitsPorMov[i][0] + " - Movimientos: [");
-            boolean primero = true;
-            for (int j = 1; j < profitsPorMov[i].length; j++) {
-                if (profitsPorMov[i][j] > 0) {
-                    if (!primero) System.out.print(", ");
-                    System.out.print(profitsPorMov[i][j]);
-                    primero = false;
-                }
-            }
-            System.out.println("]");
-        }
-        pause(2000);
-        
-        System.out.println("Reiniciando simulación completa...");
-        reboot();
-        pause(1500);
-        
-        int gananciaFinal = profit();
-        System.out.println("Sistema reiniciado correctamente:");
-        pause(2000);
-        
-        makeInvisible();
-    }
-
-
-    public void SilkRoadATest() {
-
-        makeVisible();
-        JOptionPane.showMessageDialog(null,
-            "Inicio de prueba de aceptación\n\n" +
-            "Ruta creada con longitud: " + lenRoad,
-            "Inicio", JOptionPane.INFORMATION_MESSAGE);
-    
-        placeStore(5, 75);
-        placeStore(8, 50);
-        placeStore(12, 120);
-    
-        JOptionPane.showMessageDialog(null,
-            "Tiendas creadas:\n" +
-            "Normal en 2 (100 tenges)\n" +
-            "Autonomous en 5 (75 tenges)\n" +
-            "Fighter en 8 (50 tenges)\n" +
-            "Normal en 12 (120 tenges)",
-            "Tiendas", JOptionPane.INFORMATION_MESSAGE);
-    
-        placeRobot(0);
-        placeRobot("neverBack", 4);
-        placeRobot("Tender", 10);
-    
-        JOptionPane.showMessageDialog(null,
-            "Robots colocados:\n" +
-            "Normal en 0\n" +
-            "NeverBack en 4\n" +
-            "Tender en 10",
-            "Robots", JOptionPane.INFORMATION_MESSAGE);
-    
-        moveRobot(0, 2);
-        moveRobot(4, 5);
-        moveRobot(10, 8);
-    
-        int profitManual = profit();
-        JOptionPane.showMessageDialog(null,
-            "Ganancia acumulada: " + profitManual + " tenges",
-            "Movimiento manual", JOptionPane.INFORMATION_MESSAGE);
-    
-        moveRobots();
-        int profitTotal = profit();
-    
-        JOptionPane.showMessageDialog(null,
-            "Ganancia total acumulada: " + profitTotal + " tenges",
-            "Movimiento automático", JOptionPane.INFORMATION_MESSAGE);
-    
-        resupplyStores();
-        JOptionPane.showMessageDialog(null,
-            "Tiendas reabastecidas correctamente.",
-            "Reabastecimiento", JOptionPane.INFORMATION_MESSAGE);
-    
-        int respuesta = JOptionPane.showConfirmDialog(null,
-            "Ganancia final: " + profitTotal + " tenges.\n\n" +
-            "¿El comportamiento observado fue el esperado?",
-            "Resultado final", JOptionPane.YES_NO_OPTION);
-    
-        if (respuesta == JOptionPane.YES_OPTION) {
-            JOptionPane.showMessageDialog(null,
-                "Prueba de aceptación aprobada por el usuario.",
-                "Resultado", JOptionPane.INFORMATION_MESSAGE);
-        } else {
-            JOptionPane.showMessageDialog(null,
-                "Prueba de aceptación rechazada por el usuario.",
-                "Resultado", JOptionPane.ERROR_MESSAGE);
-        }
-    
-        makeInvisible();
-    }
-    
-    public Store getStore(int position){
-        return stores.get(position);
-    }
-    
-    /**
-    * Prueba de aceptación B para SilkRoad - Enfocada en tiendas especiales y movimientos estratégicos
-    */
-    public void SilkRoadBTest() {
-        makeVisible();
-        JOptionPane.showMessageDialog(null,"Inicio de Prueba de Aceptación B - Tiendas Especiales\n\n" +
-        "Ruta creada con longitud: " + lenRoad + "\n" +
-        "Esta prueba se enfoca en tiendas Fighter, Bonus y comportamientos especiales",
-        "Inicio Prueba B", JOptionPane.INFORMATION_MESSAGE);
-        // Colocar tiendas especiales
-        placeStore("fighter", 3, 200);
-        placeStore("bonus", 6, 100);
-        placeStore("autonomous", 9, 150);
-        placeStore("normal", 12, 80);
-        JOptionPane.showMessageDialog(null,
-        "Tiendas especiales creadas:\n" +
-        "Fighter en posición 3 (200 tenges - requiere robot rico)\n" +
-        "Bonus en posición 6 (100 tenges - da 50% extra)\n" +
-        "Autonomous en posición 9 (150 tenges - se mueve aleatoriamente)\n" +
-        "Normal en posición 12 (80 tenges)",
-        "Tiendas Especiales", JOptionPane.INFORMATION_MESSAGE);
-        // Colocar robots con diferentes tipos
-        placeRobot(0);  // Robot normal
-        placeRobot("neverBack", 2);  // Robot que nunca retrocede
-        placeRobot("Tender", 5);     // Robot que toma solo la mitad
-        JOptionPane.showMessageDialog(null,
-        "Robots colocados:\n" +
-        "Robot Normal en posición 0\n" +
-        "NeverBack Robot en posición 2\n" +
-        "Tender Robot en posición 5\n\n" +
-        "Cada robot tiene estrategias diferentes de movimiento y saqueo",
-        "Robots Especializados", JOptionPane.INFORMATION_MESSAGE);
-        // Fase 1: Movimientos manuales a tiendas específicas
-        JOptionPane.showMessageDialog(null,
-        "FASE 1: Movimientos Manuales\n\n" +
-        "Los robots se moverán manualmente a tiendas específicas\n" +
-        "para demostrar sus comportamientos individuales",
-        "Fase 1", JOptionPane.INFORMATION_MESSAGE);
-        // Robot normal intenta saquear tienda Fighter (debería fallar por ser pobre)
-        moveRobot(0, 3);
-        int profitFase1 = profit();
-        JOptionPane.showMessageDialog(null,
-        "Movimiento 1: Robot Normal → Tienda Fighter\n" +
-        "Robot pobre (0 tenges) vs Fighter (200 tenges)\n" +
-        "Resultado: No puede saquear (requiere >200 tenges)\n" +
-        "Ganancia acumulada: " + profitFase1 + " tenges",
-        "Movimiento 1", JOptionPane.INFORMATION_MESSAGE);
-        // Tender robot saquea tienda Bonus (toma solo la mitad)
-        moveRobot(5, 1);
-        int profitFase2 = profit();
-        JOptionPane.showMessageDialog(null,
-        "Movimiento 2: Tender Robot → Tienda Bonus\n" +
-        "Tender toma solo el 50% de los tenges\n" +
-        "Bonus Store da 50% extra (100 → 150)\n" +
-        "Tender recibe: 75 tenges - distancia\n" +
-        "Ganancia acumulada: " + profitFase2 + " tenges",
-        "Movimiento 2", JOptionPane.INFORMATION_MESSAGE);
-        // Fase 2: Movimiento automático estratégico
-        JOptionPane.showMessageDialog(null,
-        "FASE 2: Movimiento Automático\n\n" +
-        "Los robots decidirán automáticamente sus movimientos\n" +
-        "buscando maximizar las ganancias totales",
-        "Fase 2", JOptionPane.INFORMATION_MESSAGE);
-        moveRobots();
-        int profitAutomatico = profit();
-        JOptionPane.showMessageDialog(null,
-        "Movimiento automático completado\n\n" +
-        "Ganancia después de movimiento automático: " + profitAutomatico + " tenges\n" +
-        "Los robots han calculado la ruta más rentable considerando:\n" +
-        "Distancias entre posiciones\n" +
-        "Tenges disponibles en tiendas\n" +
-        "Comportamientos especiales de cada robot",
-        "Movimiento Automático", JOptionPane.INFORMATION_MESSAGE);
-        // Fase 3: Reabastecimiento y retorno
-        JOptionPane.showMessageDialog(null,
-        "FASE 3: Mantenimiento del Sistema\n\n" +
-        "Reabastecimiento de tiendas vacías\n" +
-        "Retorno de robots a posiciones iniciales",
-        "Fase 3", JOptionPane.INFORMATION_MESSAGE);
-        resupplyStores();
-        returnRobots();
-        // Mostrar estado final
-        int[][] storesInfo = stores();
-        int[][] robotsInfo = robots();
-        StringBuilder estadoFinal = new StringBuilder();
-        estadoFinal.append("ESTADO FINAL DEL SISTEMA\n\n");
-        estadoFinal.append("TIENDAS REABASTECIDAS:\n");
-        for (int[] store : storesInfo) {
-            estadoFinal.append("Posición ").append(store[0])
-            .append(": ").append(store[1]).append(" tenges\n");
-        }
-        estadoFinal.append("\nROBOTS EN POSICIONES INICIALES:\n");
-        for (int[] robot : robotsInfo) {
-            estadoFinal.append("• Posición ").append(robot[0])
-            .append(": ").append(robot[1]).append(" tenges acumulados\n");
-        }
-        estadoFinal.append("\nGanancia total final: ").append(profitAutomatico).append(" tenges");
-        JOptionPane.showMessageDialog(null,
-        estadoFinal.toString(),
-        "Estado Final", JOptionPane.INFORMATION_MESSAGE);
-        // Evaluación final
-        int respuesta = JOptionPane.showConfirmDialog(null,
-        "RESUMEN DE LA PRUEBA B:\n\n" +
-        "Tiendas especiales (Fighter, Bonus, Autonomous) funcionando\n" +
-        "Robots con comportamientos diferenciados\n" +
-        "Movimiento manual demostrando reglas especiales\n" +
-        "Movimiento automático optimizando ganancias\n" +
-        "Sistema de reabastecimiento y retorno\n\n" +
-        "Ganancia final: " + profitAutomatico + " tenges\n\n" +
-        "¿El comportamiento observado fue el esperado?",
-        "Evaluación Final - Prueba B", JOptionPane.YES_NO_OPTION);
-        if (respuesta == JOptionPane.YES_OPTION) {
-            JOptionPane.showMessageDialog(null,
-            "PRUEBA DE ACEPTACIÓN B APROBADA\n\n" +
-            "Todas las funcionalidades de tiendas especiales\n" +
-            "y robots especializados funcionan correctamente.",
-            "Prueba Exitosa", JOptionPane.INFORMATION_MESSAGE);
-        } else {
-            JOptionPane.showMessageDialog(null,
-            "Prueba de aceptación B requiere ajustes.\n" +
-            "Revise el comportamiento de las tiendas especiales.",
-            "Prueba con Observaciones", JOptionPane.WARNING_MESSAGE);
-        }
-        makeInvisible();
-    }
-    
     /**
      * Método auxiliar que pausa la ejecución por unos milisegundos
      * para que el usuario pueda observar los cambios visuales.
@@ -1327,5 +987,13 @@ public class SilkRoad {
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         }
+    }
+    
+    public boolean getVisibility(){
+        return isVisible;
+    }
+    
+    public Store getStore(int position){
+        return stores.get(position);
     }
 }

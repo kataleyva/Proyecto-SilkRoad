@@ -85,7 +85,7 @@ public class SilkRoadC4Test
         int profit = silkroad.profit();
         assertEquals(97, profit); 
     }    
-    
+     
     @Test
     public void returnRobotsLRShouldNotCameBackNeverBackRobotsToTheInitialPosition() {
         silkroad.placeRobot("neverBack", 0);
@@ -150,6 +150,7 @@ public class SilkRoadC4Test
         // (puede ser la misma o diferente, pero el comportamiento debe ser consistente)
         assertTrue(actualPosition >= 6 && actualPosition <= 10);
     }
+    
     @Test
     public void placeStoreLRShouldNotAllowDuplicateStores() {
         silkroad.placeStore("normal", 5, 100);
